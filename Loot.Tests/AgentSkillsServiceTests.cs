@@ -156,7 +156,7 @@ public sealed class AgentSkillsServiceTests : IDisposable
         var paths = new AppPaths(_root);
         paths.EnsureCreated();
         var database = new SqliteDatabase(paths.DatabasePath);
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         var settings = new AppSettingsService(new AppSettingRepository(database));
         var customRoot = Path.Combine(_root, "my-skills");
         var secondCustomRoot = Path.Combine(_root, "another-my-skills");
@@ -180,7 +180,7 @@ public sealed class AgentSkillsServiceTests : IDisposable
         var paths = new AppPaths(_root);
         paths.EnsureCreated();
         var database = new SqliteDatabase(paths.DatabasePath);
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         var settings = new AppSettingsService(new AppSettingRepository(database));
         var firstCustomRoot = Path.Combine(_root, "first-custom");
         await settings.SaveAsync(

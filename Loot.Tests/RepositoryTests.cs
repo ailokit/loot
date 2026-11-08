@@ -159,7 +159,7 @@ public sealed class RepositoryTests : IDisposable
     private async Task<SqliteDatabase> CreateDatabaseAsync()
     {
         var database = new SqliteDatabase(_databasePath);
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         return database;
     }
 

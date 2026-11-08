@@ -14,7 +14,7 @@ public sealed class AgentJobTests : IDisposable
     {
         Directory.CreateDirectory(_root);
         var database = new SqliteDatabase(Path.Combine(_root, "loot.db"));
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         var handler = new ValidatingAgentJobHandler();
         using var scheduler = new CronJobScheduler(
             new CronJobRepository(database),
@@ -68,7 +68,7 @@ public sealed class AgentJobTests : IDisposable
         var workingDirectory = Path.Combine(_root, "workspace");
         Directory.CreateDirectory(workingDirectory);
         var database = new SqliteDatabase(Path.Combine(_root, "loot.db"));
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         using var scheduler = new CronJobScheduler(
             new CronJobRepository(database),
             [new ValidatingAgentJobHandler()],

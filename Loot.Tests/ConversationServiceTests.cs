@@ -21,7 +21,7 @@ public sealed class ConversationServiceTests : IDisposable
     public async Task CreateAsync_PersistsImmutableProviderAndSkillSnapshot()
     {
         var database = new SqliteDatabase(_path);
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         var now = DateTimeOffset.UtcNow;
         var provider = new ApiProvider("provider", "OpenAI", ProviderType.OpenAi, "key", "https://example.test", "gpt-test", true, true, now, now);
         await new ApiProviderRepository(database).SaveAsync(provider);
@@ -58,7 +58,7 @@ public sealed class ConversationServiceTests : IDisposable
     public async Task CreateAsync_PersistsSkillPromptInProviderSnapshot()
     {
         var database = new SqliteDatabase(_path);
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         var now = DateTimeOffset.UtcNow;
         var provider = new ApiProvider("provider", "OpenAI", ProviderType.OpenAi, "key", null, "model", true, true, now, now);
         await new ApiProviderRepository(database).SaveAsync(provider);

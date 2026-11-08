@@ -13,7 +13,7 @@ public sealed class NotificationJobTests : IDisposable
     public async Task PersistsAndExecutesNotificationParametersThroughTheJob()
     {
         var database = new SqliteDatabase(_databasePath);
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         var notifications = new FakeNotificationService();
         var notificationJob = new NotificationJob(notifications);
         using var scheduler = new CronJobScheduler(
@@ -31,7 +31,7 @@ public sealed class NotificationJobTests : IDisposable
     public async Task ExecutesLegacyNotificationParametersAsNativeNotification()
     {
         var database = new SqliteDatabase(_databasePath);
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         var notifications = new FakeNotificationService();
         var notificationJob = new NotificationJob(notifications);
         using var scheduler = new CronJobScheduler(
@@ -49,7 +49,7 @@ public sealed class NotificationJobTests : IDisposable
     public async Task PersistsTopmostWindowDeliveryType()
     {
         var database = new SqliteDatabase(_databasePath);
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         var notifications = new FakeNotificationService();
         var notificationJob = new NotificationJob(notifications);
         using var scheduler = new CronJobScheduler(

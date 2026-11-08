@@ -11,7 +11,7 @@ public sealed class CronJobRepositoryTests : IDisposable
     public async Task PersistsJobParametersAndUpdatesItsCheckpoint()
     {
         var database = new SqliteDatabase(_databasePath);
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         var repository = new CronJobRepository(database);
         var created = DateTimeOffset.UtcNow;
         var job = new CronJob(
@@ -34,7 +34,7 @@ public sealed class CronJobRepositoryTests : IDisposable
     public async Task ListsAllJobsUpdatesDefinitionAndDeletesJob()
     {
         var database = new SqliteDatabase(_databasePath);
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         var repository = new CronJobRepository(database);
         var created = DateTimeOffset.UtcNow;
         var job = new CronJob(

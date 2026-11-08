@@ -117,11 +117,6 @@
                     <TextBox Text="{Binding DataDirectory, Mode=TwoWay}"
                              PlaceholderText="{Binding Localization[DataDirectoryPlaceholder]}"/>
                 </DockPanel>
-                <ToggleSwitch IsChecked="{Binding MigrateData, Mode=TwoWay}"
-                              Content="{Binding Localization[MigrateData]}"/>
-                <TextBlock Text="{Binding Localization[MigrateDataDescription]}" FontSize="12"
-                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                           TextWrapping="Wrap"/>
                 <Button HorizontalAlignment="Right" Content="{Binding Localization[ApplyDataDirectory]}"
                         Command="{Binding ApplyDataDirectoryCommand}"/>
             </StackPanel>

@@ -19,7 +19,7 @@ public sealed class ChatWindowViewModelTests : IDisposable
     public async Task PrepareNewSession_SelectsDefaultProviderAndFirstSkill()
     {
         var database = new SqliteDatabase(_path);
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         var viewModel = CreateViewModel(database);
         viewModel.AppState.Providers.Add(CreateProvider());
         viewModel.AppState.Skills.Add(CreateSkill());
@@ -34,7 +34,7 @@ public sealed class ChatWindowViewModelTests : IDisposable
     public async Task ReloadingSelectedSkill_UsesTheUpdatedPromptObject()
     {
         var database = new SqliteDatabase(_path);
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         var viewModel = CreateViewModel(database);
         var original = CreateSkill();
         viewModel.AppState.Skills.Add(original);
@@ -53,7 +53,7 @@ public sealed class ChatWindowViewModelTests : IDisposable
     public async Task SelectedProvider_ExposesAllModelsAndSelectsTheActiveModel()
     {
         var database = new SqliteDatabase(_path);
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         var viewModel = CreateViewModel(database);
         viewModel.AppState.Providers.Add(CreateProvider(modelIds: ["model-a", "model-b"]));
 
@@ -67,7 +67,7 @@ public sealed class ChatWindowViewModelTests : IDisposable
     public async Task SelectingModel_UpdatesSelectionAndDisplayNames()
     {
         var database = new SqliteDatabase(_path);
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         var viewModel = CreateViewModel(database);
         viewModel.AppState.Providers.Add(CreateProvider(modelIds: ["model-a", "model-b"]));
         viewModel.PrepareNewSession();
@@ -98,7 +98,7 @@ public sealed class ChatWindowViewModelTests : IDisposable
     public async Task ShowAddAttachmentButton_TracksSelectedModelMultimodalFlag()
     {
         var database = new SqliteDatabase(_path);
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         var viewModel = CreateViewModel(database);
         var provider = CreateProvider(modelIds: ["model-a", "model-b"]) with
         {
@@ -119,7 +119,7 @@ public sealed class ChatWindowViewModelTests : IDisposable
     public async Task AddAttachmentsAsync_CopiesFilesAndExposesThumbnails()
     {
         var database = new SqliteDatabase(_path);
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         var attachmentsRoot = Path.Combine(Path.GetTempPath(), "Loot.Tests", $"{Guid.NewGuid():N}");
         var viewModel = CreateViewModel(database, appPaths: new AppPaths(attachmentsRoot));
         var source = Path.Combine(Path.GetTempPath(), "Loot.Tests", $"{Guid.NewGuid():N}.png");
@@ -139,7 +139,7 @@ public sealed class ChatWindowViewModelTests : IDisposable
     public async Task AddClipboardImageAsync_SavesPngAndExposesThumbnail()
     {
         var database = new SqliteDatabase(_path);
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         var attachmentsRoot = Path.Combine(Path.GetTempPath(), "Loot.Tests", $"{Guid.NewGuid():N}");
         var viewModel = CreateViewModel(database, appPaths: new AppPaths(attachmentsRoot));
         var image = new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
@@ -156,7 +156,7 @@ public sealed class ChatWindowViewModelTests : IDisposable
     public async Task RemoveAttachment_DeletesUnsentCopiedFile()
     {
         var database = new SqliteDatabase(_path);
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         var attachmentsRoot = Path.Combine(Path.GetTempPath(), "Loot.Tests", $"{Guid.NewGuid():N}");
         var viewModel = CreateViewModel(database, appPaths: new AppPaths(attachmentsRoot));
         var source = Path.Combine(Path.GetTempPath(), "Loot.Tests", $"{Guid.NewGuid():N}.jpg");
@@ -174,7 +174,7 @@ public sealed class ChatWindowViewModelTests : IDisposable
     public async Task SwitchingToNonMultimodalModel_ClearsAttachments()
     {
         var database = new SqliteDatabase(_path);
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         var viewModel = CreateViewModel(database);
         var provider = CreateProvider(modelIds: ["model-a", "model-b"]) with
         {
@@ -194,7 +194,7 @@ public sealed class ChatWindowViewModelTests : IDisposable
     public async Task CanSend_TrueWithOnlyAttachments()
     {
         var database = new SqliteDatabase(_path);
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         var viewModel = CreateViewModel(database);
         viewModel.AppState.Providers.Add(CreateProvider(modelIds: ["model-b"]) with
         {
@@ -211,7 +211,7 @@ public sealed class ChatWindowViewModelTests : IDisposable
     public async Task WorkspaceSelection_IsScopedToCurrentChatAndClearedForNewConversation()
     {
         var database = new SqliteDatabase(_path);
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         var workspace = new ChatWorkspace();
         var viewModel = CreateViewModel(database, workspace: workspace);
         var folder = Path.Combine(Path.GetTempPath(), "Loot.Tests", Guid.NewGuid().ToString("N"));

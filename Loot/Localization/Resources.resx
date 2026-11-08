@@ -269,19 +269,13 @@
         <value>Data directory</value>
     </data>
     <data name="DataDirectoryDescription">
-        <value>Stores your conversations, providers, prompts, attachments, exports, and logs. Changes apply after restart.</value>
+        <value>Stores your conversations, providers, prompts, attachments, exports, and logs. Changing this folder does not copy existing data. Changes apply after restart.</value>
     </data>
     <data name="DataDirectoryPlaceholder">
         <value>Select a folder for Loot data</value>
     </data>
     <data name="Browse">
         <value>Browse…</value>
-    </data>
-    <data name="MigrateData">
-        <value>Migrate current data</value>
-    </data>
-    <data name="MigrateDataDescription">
-        <value>Copy all current data to the new directory and overwrite files already there. The original data is kept.</value>
     </data>
     <data name="ApplyDataDirectory">
         <value>Apply</value>

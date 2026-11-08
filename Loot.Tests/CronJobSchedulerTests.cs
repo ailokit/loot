@@ -14,7 +14,7 @@ public sealed class CronJobSchedulerTests : IDisposable
     public async Task ExecutesDuePersistedJobAndAdvancesItsCheckpoint()
     {
         var database = new SqliteDatabase(_databasePath);
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         var repository = new CronJobRepository(database);
         var executed = new TaskCompletionSource<CronJob>(TaskCreationOptions.RunContinuationsAsynchronously);
         var handler = new TestJobHandler(executed);
@@ -39,7 +39,7 @@ public sealed class CronJobSchedulerTests : IDisposable
     public async Task OneTimeJob_IsDeletedAfterExecution()
     {
         var database = new SqliteDatabase(_databasePath);
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         var repository = new CronJobRepository(database);
         var executed = new TaskCompletionSource<CronJob>(TaskCreationOptions.RunContinuationsAsynchronously);
         var handler = new TestJobHandler(executed);
@@ -70,7 +70,7 @@ public sealed class CronJobSchedulerTests : IDisposable
     public async Task ScheduleAsync_AcceptsSecondsEnabledCronExpressions()
     {
         var database = new SqliteDatabase(_databasePath);
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         var handler = new TestJobHandler(new TaskCompletionSource<CronJob>());
         using var scheduler = new CronJobScheduler(
             new CronJobRepository(database),
@@ -92,7 +92,7 @@ public sealed class CronJobSchedulerTests : IDisposable
     public async Task UpdateAsync_RecalculatesScheduleAndCanDisableJob()
     {
         var database = new SqliteDatabase(_databasePath);
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         var handler = new TestJobHandler(new TaskCompletionSource<CronJob>());
         using var scheduler = new CronJobScheduler(
             new CronJobRepository(database), [handler], NullLogger<CronJobScheduler>.Instance);
@@ -113,7 +113,7 @@ public sealed class CronJobSchedulerTests : IDisposable
     public async Task DueJobs_RunOnIndependentThreadsWithoutBlockingEachOther()
     {
         var database = new SqliteDatabase(_databasePath);
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         var bothStarted = new TaskCompletionSource<object?>(TaskCreationOptions.RunContinuationsAsynchronously);
         var release = new TaskCompletionSource<object?>(TaskCreationOptions.RunContinuationsAsynchronously);
         var handler = new BlockingJobHandler(bothStarted, release);
@@ -146,7 +146,7 @@ public sealed class CronJobSchedulerTests : IDisposable
     public async Task GlobalMaximumRuntime_CancelsAndCheckpointsAJob()
     {
         var database = new SqliteDatabase(_databasePath);
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         var repository = new CronJobRepository(database);
         var settings = new AppSettingsService(new AppSettingRepository(database));
         await settings.SaveJobMaxRuntimeAsync(TimeSpan.FromSeconds(1));

@@ -34,8 +34,7 @@ After launching Loot, add a model provider in Settings, then select a model and 
 - API keys are stored locally and sent only to the provider endpoint configured by the user.
 - Conversations, messages, providers, skills, attachments, exports, and logs are stored in the local data directory.
 - The default data directory is selected by the operating system. A custom directory can be selected in General Settings.
-- On the first launch after upgrading, Loot automatically discovers legacy application data, copies missing files, and renames the legacy SQLite database and sidecar files to the Loot names. Legacy directories are preserved for backup or rollback.
-- Versioned SQLite migrations upgrade the database schema automatically; no manual import is required.
+- Loot starts with a fresh current-version database and does not import or migrate data from previous application versions or directories.
 
 ## Scheduled job safety
 
@@ -71,7 +70,7 @@ Supported release targets:
 ```text
 Loot/
 ├── AI/            Agent orchestration, skills, tools, conversations, and model calls
-├── Data/          SQLite access, repositories, and database migrations
+├── Data/          SQLite access, repositories, and the current database schema
 ├── Jobs/          Cron scheduling and unattended agent execution
 ├── Services/      Settings, logging, localization, notifications, and platform services
 ├── ViewModels/    MVVM presentation logic

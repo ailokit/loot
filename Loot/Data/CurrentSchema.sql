@@ -1,4 +1,4 @@
-CREATE TABLE ApiProviders (
+CREATE TABLE IF NOT EXISTS ApiProviders (
     Id TEXT PRIMARY KEY,
     Name TEXT NOT NULL,
     ProviderType INTEGER NOT NULL,
@@ -11,7 +11,7 @@ CREATE TABLE ApiProviders (
     UpdatedAt TEXT NOT NULL
 );
 
-CREATE TABLE Skills (
+CREATE TABLE IF NOT EXISTS Skills (
     Id TEXT PRIMARY KEY,
     Name TEXT NOT NULL,
     Description TEXT NULL,
@@ -25,7 +25,7 @@ CREATE TABLE Skills (
     UpdatedAt TEXT NOT NULL
 );
 
-CREATE TABLE Conversations (
+CREATE TABLE IF NOT EXISTS Conversations (
     Id TEXT PRIMARY KEY,
     Title TEXT NOT NULL,
     ProviderId TEXT NOT NULL REFERENCES ApiProviders(Id),
@@ -42,7 +42,7 @@ CREATE TABLE Conversations (
     UpdatedAt TEXT NOT NULL
 );
 
-CREATE TABLE Messages (
+CREATE TABLE IF NOT EXISTS Messages (
     Id TEXT PRIMARY KEY,
     ConversationId TEXT NOT NULL REFERENCES Conversations(Id) ON DELETE CASCADE,
     SequenceNo INTEGER NOT NULL,
@@ -58,19 +58,19 @@ CREATE TABLE Messages (
     UNIQUE (ConversationId, SequenceNo)
 );
 
-CREATE TABLE AppSettings (
+CREATE TABLE IF NOT EXISTS AppSettings (
     Key TEXT PRIMARY KEY,
     Value TEXT NOT NULL
 );
 
-CREATE TABLE ProviderModels (
+CREATE TABLE IF NOT EXISTS ProviderModels (
     ProviderId TEXT NOT NULL REFERENCES ApiProviders(Id) ON DELETE CASCADE,
     ModelId TEXT NOT NULL,
     IsMultimodal INTEGER NOT NULL DEFAULT 0,
     PRIMARY KEY (ProviderId, ModelId)
 );
 
-CREATE TABLE McpServers (
+CREATE TABLE IF NOT EXISTS McpServers (
     Id TEXT PRIMARY KEY,
     Name TEXT NOT NULL,
     Transport INTEGER NOT NULL,
@@ -84,7 +84,7 @@ CREATE TABLE McpServers (
     UpdatedAt TEXT NOT NULL
 );
 
-CREATE TABLE McpTools (
+CREATE TABLE IF NOT EXISTS McpTools (
     Id TEXT PRIMARY KEY,
     ServerId TEXT NOT NULL REFERENCES McpServers(Id) ON DELETE CASCADE,
     Name TEXT NOT NULL,
@@ -94,7 +94,7 @@ CREATE TABLE McpTools (
     UNIQUE (ServerId, Name)
 );
 
-CREATE TABLE CronJobs (
+CREATE TABLE IF NOT EXISTS CronJobs (
     Id INTEGER PRIMARY KEY AUTOINCREMENT,
     JobType TEXT NOT NULL,
     CronExpression TEXT NOT NULL,
@@ -103,16 +103,17 @@ CREATE TABLE CronJobs (
     LastRunAtUtc TEXT NULL,
     NextRunAtUtc TEXT NOT NULL,
     CreatedAtUtc TEXT NOT NULL,
-    UpdatedAtUtc TEXT NOT NULL
+    UpdatedAtUtc TEXT NOT NULL,
+    IsOneTime INTEGER NOT NULL DEFAULT 0
 );
 
-CREATE INDEX IX_Conversations_UpdatedAt ON Conversations(UpdatedAt DESC);
-CREATE INDEX IX_Messages_Conversation_Sequence ON Messages(ConversationId, SequenceNo);
-CREATE INDEX IX_Skills_SortOrder ON Skills(SortOrder);
-CREATE INDEX IX_McpTools_ServerId ON McpTools(ServerId);
-CREATE INDEX IX_CronJobs_NextRunAtUtc ON CronJobs(IsEnabled, NextRunAtUtc);
+CREATE INDEX IF NOT EXISTS IX_Conversations_UpdatedAt ON Conversations(UpdatedAt DESC);
+CREATE INDEX IF NOT EXISTS IX_Messages_Conversation_Sequence ON Messages(ConversationId, SequenceNo);
+CREATE INDEX IF NOT EXISTS IX_Skills_SortOrder ON Skills(SortOrder);
+CREATE INDEX IF NOT EXISTS IX_McpTools_ServerId ON McpTools(ServerId);
+CREATE INDEX IF NOT EXISTS IX_CronJobs_NextRunAtUtc ON CronJobs(IsEnabled, NextRunAtUtc);
 
-INSERT INTO Skills (Id, Name, Description, SystemPrompt, Icon, IsBuiltIn, IsEnabled, SortOrder, Version, CreatedAt, UpdatedAt) VALUES
+INSERT OR IGNORE INTO Skills (Id, Name, Description, SystemPrompt, Icon, IsBuiltIn, IsEnabled, SortOrder, Version, CreatedAt, UpdatedAt) VALUES
 ('builtin-chat', 'General chat', 'A general-purpose AI assistant', 'You are Loot, a helpful AI assistant.', '💬', 1, 1, 0, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 ('builtin-translate', 'Translation', 'Natural and faithful translation', 'You are a professional translation assistant. Preserve the original meaning and produce natural, fluent translations.', '🌐', 1, 1, 1, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 ('builtin-summarize', 'Summarization', 'Concise and accurate summaries', 'Summarize the input concisely and accurately.', '📝', 1, 1, 2, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),

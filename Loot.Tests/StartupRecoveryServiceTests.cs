@@ -12,7 +12,7 @@ public sealed class StartupRecoveryServiceTests : IDisposable
     public async Task RecoverAsync_CancelsOnlyIncompleteMessages()
     {
         var database = new SqliteDatabase(_databasePath);
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         await SeedConversationAsync(database);
         await SeedMessageAsync(database, "pending", 1, MessageStatus.Pending);
         await SeedMessageAsync(database, "streaming", 2, MessageStatus.Streaming);

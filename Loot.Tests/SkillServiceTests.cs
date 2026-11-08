@@ -14,7 +14,7 @@ public sealed class SkillServiceTests : IDisposable
     public async Task SaveCustomAsync_CreatesAndVersionsCustomSkill()
     {
         var database = new SqliteDatabase(_path);
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         var service = new SkillService(new SkillRepository(database));
         var now = DateTimeOffset.UtcNow;
         var draft = new Skill("custom", "Research", null, "Be rigorous.", null, false, true, 10, 0, now, now);
@@ -31,7 +31,7 @@ public sealed class SkillServiceTests : IDisposable
     public async Task SaveCustomAsync_UpdatesBuiltInSkill()
     {
         var database = new SqliteDatabase(_path);
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         var service = new SkillService(new SkillRepository(database));
         var builtIn = await new SkillRepository(database).GetByIdAsync("builtin-chat");
 
@@ -45,7 +45,7 @@ public sealed class SkillServiceTests : IDisposable
     public async Task DeleteCustomAsync_DisablesBuiltInSkill()
     {
         var database = new SqliteDatabase(_path);
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         var service = new SkillService(new SkillRepository(database));
 
         await service.DeleteCustomAsync("builtin-chat");

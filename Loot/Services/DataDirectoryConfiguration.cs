@@ -7,25 +7,17 @@ namespace Loot.Services;
 public sealed class DataDirectoryConfiguration
 {
     private readonly string _configurationPath;
-    private readonly string? _legacyConfigurationPath;
 
-    public DataDirectoryConfiguration(string configurationPath, string? legacyConfigurationPath = null)
+    public DataDirectoryConfiguration(string configurationPath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(configurationPath);
         _configurationPath = Path.GetFullPath(configurationPath);
-        _legacyConfigurationPath = string.IsNullOrWhiteSpace(legacyConfigurationPath)
-            ? null
-            : Path.GetFullPath(legacyConfigurationPath);
     }
 
     public static DataDirectoryConfiguration CreateDefault() =>
-        new(AppPaths.GetDataDirectoryConfigurationPath(), AppPaths.GetLegacyDataDirectoryConfigurationPath());
+        new(AppPaths.GetDataDirectoryConfigurationPath());
 
-    public string? GetDataDirectory()
-    {
-        return TryRead(_configurationPath) ??
-               (_legacyConfigurationPath is null ? null : TryRead(_legacyConfigurationPath));
-    }
+    public string? GetDataDirectory() => TryRead(_configurationPath);
 
     private static string? TryRead(string path)
     {

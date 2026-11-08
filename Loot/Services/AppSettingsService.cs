@@ -15,7 +15,6 @@ public sealed class AppSettingsService(AppSettingRepository repository)
     public const string LanguageKey = "language";
     public const string ChatShortcutKey = "chat.shortcut";
     public const string NewChatWindowShortcutKey = "chat.new-window-shortcut";
-    public const string CustomAgentSkillsDirectoryKey = "agent-skills.custom-directory";
     public const string CustomAgentSkillsDirectoriesKey = "agent-skills.custom-directories";
     public const string EnabledToolsKey = "ai.enabled-tools";
     public const string ShellToolKey = "ai.shell-tool";

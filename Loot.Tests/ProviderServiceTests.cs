@@ -21,7 +21,7 @@ public sealed class ProviderServiceTests : IDisposable
     public async Task SaveAsync_StoresValidatedProvider()
     {
         var database = new SqliteDatabase(_databasePath);
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         var service = new ProviderService(new ApiProviderRepository(database));
         var provider = CreateProvider(ProviderType.OpenAi);
 

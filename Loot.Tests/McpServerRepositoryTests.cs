@@ -11,7 +11,7 @@ public sealed class McpServerRepositoryTests : IDisposable
     public async Task SaveRefreshAndDeleteServerAndTools()
     {
         var database = new SqliteDatabase(_path);
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         var repository = new McpServerRepository(database);
         var now = DateTimeOffset.UtcNow;
         var server = new McpServer("server", "Demo", McpTransportKind.Stdio, null, "node", "[\"server.js\"]", "{}", "{}", true, now, now);

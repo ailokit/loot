@@ -35,7 +35,7 @@ public static class ServiceCollectionExtensions
             return new SqliteDatabase(appPaths.DatabasePath);
         });
         services.AddTransient<LazyServiceProvider>();
-        services.AddSingleton<DatabaseMigrator>();
+        services.AddSingleton<DatabaseInitializer>();
         services.AddSingleton<DataDirectoryService>();
         services.AddSingleton<MessageRepository>();
         services.AddSingleton<AppSettingRepository>();
@@ -78,11 +78,11 @@ public static class ServiceCollectionExtensions
     }
 
     /// <summary>
-    /// Completes schema migration and interrupted-message recovery before any window reads application data.
+    /// Initializes the current schema and recovers interrupted messages before any window reads application data.
     /// </summary>
     public static void InitializeLootDatabase(this IServiceProvider services)
     {
-        services.GetRequiredService<DatabaseMigrator>().MigrateAsync().GetAwaiter().GetResult();
+        services.GetRequiredService<DatabaseInitializer>().InitializeAsync().GetAwaiter().GetResult();
         services.GetRequiredService<StartupRecoveryService>().RecoverAsync().GetAwaiter().GetResult();
     }
 }

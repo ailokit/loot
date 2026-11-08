@@ -154,13 +154,6 @@ public sealed class AgentSkillsService
 
         var savedPaths = await _settings.GetAsync(AppSettingsService.CustomAgentSkillsDirectoriesKey, cancellationToken)
             .ConfigureAwait(false);
-        if (string.IsNullOrWhiteSpace(savedPaths))
-        {
-            // Read the original single-directory setting for existing installations.
-            var legacyPath = await _settings.GetAsync(AppSettingsService.CustomAgentSkillsDirectoryKey, cancellationToken)
-                .ConfigureAwait(false);
-            savedPaths = string.IsNullOrWhiteSpace(legacyPath) ? null : legacyPath;
-        }
 
         var paths = ParseCustomSkillDirectories(savedPaths);
         CustomSkillsDirectories = paths;
@@ -174,9 +167,7 @@ public sealed class AgentSkillsService
         string[] paths;
         try
         {
-            paths = savedPaths.TrimStart().StartsWith("[", StringComparison.Ordinal)
-                ? JsonSerializer.Deserialize(savedPaths, LootJsonSerializerContext.Default.StringArray) ?? []
-                : [savedPaths];
+            paths = JsonSerializer.Deserialize(savedPaths, LootJsonSerializerContext.Default.StringArray) ?? [];
         }
         catch (JsonException)
         {

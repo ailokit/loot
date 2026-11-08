@@ -79,9 +79,6 @@ public sealed partial class GeneralSettingsViewModel : SettingsViewModelBase
     private string _dataDirectory = string.Empty;
 
     [ObservableProperty]
-    private bool _migrateData = true;
-
-    [ObservableProperty]
     private bool _isUpdatingDataDirectory;
 
     public void AttachStorageProvider(IStorageProvider? storageProvider) => _storageProvider = storageProvider;
@@ -104,7 +101,6 @@ public sealed partial class GeneralSettingsViewModel : SettingsViewModelBase
                 : Color.Parse(AppSettingsService.DefaultAccentColor);
             LaunchAtStartup = _state.LaunchAtStartup;
             DataDirectory = _dataDirectoryService.CurrentDataDirectory;
-            MigrateData = true;
             AppSettingsService.ApplyTheme(SelectedTheme.Key);
         }
         finally
@@ -159,7 +155,7 @@ public sealed partial class GeneralSettingsViewModel : SettingsViewModelBase
         IsUpdatingDataDirectory = true;
         try
         {
-            await _dataDirectoryService.SetDataDirectoryAsync(DataDirectory, MigrateData).ConfigureAwait(false);
+            _dataDirectoryService.SetDataDirectory(DataDirectory);
             StatusMessage = T("DataDirectoryUpdatedRestartRequired");
         }
         catch (Exception exception)

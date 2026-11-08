@@ -16,7 +16,7 @@ public sealed class ChatServiceTests : IDisposable
     public async Task SendStreamingAsync_UsesMafAgentAndRejectsUnsupportedProvider()
     {
         var database = new SqliteDatabase(_path);
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         await SeedConversationAsync(database);
         var service = new ChatService(new MessageRepository(database), new ConversationRepository(database), new ApiProviderRepository(database), new SessionRunLock(), new ChatToolRegistry([]), new ChatWorkspace());
 
@@ -78,7 +78,7 @@ public sealed class ChatServiceTests : IDisposable
     public async Task SendStreamingAsync_PersistsUserMessageWithAttachments_BeforeProviderRejection()
     {
         var database = new SqliteDatabase(_path);
-        await new DatabaseMigrator(database).MigrateAsync();
+        await new DatabaseInitializer(database).InitializeAsync();
         await SeedConversationAsync(database);
         var service = new ChatService(new MessageRepository(database), new ConversationRepository(database), new ApiProviderRepository(database), new SessionRunLock(), new ChatToolRegistry([]), new ChatWorkspace());
         var dirPath = Path.Combine(Path.GetTempPath(), "Loot.Tests");
