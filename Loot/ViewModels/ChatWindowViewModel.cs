@@ -744,7 +744,7 @@ public sealed partial class ChatWindowViewModel : ViewModelBase
         Dispatcher.UIThread.Post(RestoreSkillSelection);
     }
 
-    private void RestoreSkillSelection()
+    internal void RestoreSkillSelection()
     {
         if (AppState.Skills.Count == 0)
         {

@@ -6,7 +6,6 @@ using Loot.AI.Tools;
 using Loot.Data;
 using Loot.Services;
 using Loot.ViewModels;
-using Avalonia.Threading;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Loot.Tests;
@@ -43,7 +42,7 @@ public sealed class ChatWindowViewModelTests : IDisposable
         var updated = original with { SystemPrompt = "Answer only in Spanish.", Version = original.Version + 1 };
         viewModel.AppState.Skills.Clear();
         viewModel.AppState.Skills.Add(updated);
-        Dispatcher.UIThread.RunJobs();
+        viewModel.RestoreSkillSelection();
 
         Assert.Same(updated, viewModel.SelectedSkill);
         Assert.Equal(updated.SystemPrompt, viewModel.SelectedSkill?.SystemPrompt);
