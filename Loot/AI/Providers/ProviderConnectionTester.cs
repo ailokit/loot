@@ -74,7 +74,7 @@ public sealed class ProviderConnectionTester(HttpClient? httpClient = null) : IP
 
     public async Task<IReadOnlyList<string>> FetchModelsAsync(ApiProvider provider, CancellationToken cancellationToken = default)
     {
-        ProviderService.Validate(provider);
+        ProviderService.Validate(provider, requireModelId: false);
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         timeout.CancelAfter(TimeSpan.FromSeconds(15));
         using var request = CreateRequest(provider);

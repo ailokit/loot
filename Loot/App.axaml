@@ -11,6 +11,7 @@
     <TrayIcon.Icons>
         <TrayIcons>
             <TrayIcon Icon="/Assets/loot-tray.png"
+                      ToolTipText="Loot"
                       mac:MacOSProperties.IsTemplateIcon="True">
                 <TrayIcon.Menu>
                     <NativeMenu>

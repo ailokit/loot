@@ -34,7 +34,7 @@ namespace Loot.AI.Providers
         public Task<IReadOnlyList<string>> FetchModelsAsync(ApiProvider provider,
             CancellationToken cancellationToken = default)
         {
-            Validate(provider);
+            Validate(provider, requireModelId: false);
             return (_connectionTester ??
                     throw new InvalidOperationException("Provider connection testing is not configured."))
                 .FetchModelsAsync(provider, cancellationToken);
@@ -43,10 +43,13 @@ namespace Loot.AI.Providers
         /// <summary>
         /// Validates user-editable provider fields before they reach the database or a network client.
         /// </summary>
-        public static void Validate(ApiProvider provider)
+        public static void Validate(ApiProvider provider, bool requireModelId = true)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(provider.Name);
-            ArgumentException.ThrowIfNullOrWhiteSpace(provider.ModelId);
+            if (requireModelId)
+            {
+                ArgumentException.ThrowIfNullOrWhiteSpace(provider.ModelId);
+            }
             if (provider.ProviderType is not ProviderType.Ollama && string.IsNullOrWhiteSpace(provider.ApiKey))
             {
                 throw new ArgumentException("An API key is required for the selected provider.", nameof(provider));

@@ -2,11 +2,11 @@
 
 > Loot — One Call, Intelligence Arrives.
 
-Loot is a native desktop AI workspace built with .NET 10 and Avalonia. It brings models, conversations, tools, workspaces, and scheduled tasks into one lightweight, controlled application. Use it as a fast chat entry point or explicitly authorize it to work with files, webpages, notifications, and recurring tasks.
+Loot is a native desktop AI workspace built with .NET 11 and Avalonia. It brings models, conversations, tools, workspaces, and scheduled tasks into one lightweight, controlled application. Use it as a fast chat entry point or explicitly authorize it to work with files, webpages, notifications, and recurring tasks.
 
 ## Features
 
-- Native .NET 10 and Avalonia desktop experience with a tray icon, global hotkeys, and light or dark themes.
+- Native .NET 11 and Avalonia desktop experience with a tray icon, global hotkeys, and light or dark themes.
 - OpenAI, Ollama, and OpenAI-compatible providers, with support for both local and hosted models.
 - Markdown, code blocks, images, clipboard attachments, and local SQLite conversation history.
 - Workspace boundaries that restrict file access and prevent path traversal or symlink escapes.
@@ -18,7 +18,7 @@ Loot is a native desktop AI workspace built with .NET 10 and Avalonia. It brings
 
 ### Requirements
 
-- .NET SDK 10.0 or later.
+- .NET 11 SDK (RC3) or later.
 - A desktop environment supported by Avalonia.
 - Provider credentials or a locally running Ollama instance.
 

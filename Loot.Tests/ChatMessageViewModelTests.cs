@@ -11,36 +11,30 @@ namespace Loot.Tests;
 public sealed class ChatMessageViewModelTests
 {
     [Fact]
-    public void StreamingResponseBuffer_CoalescesLongTokenStreamsWithoutLosingContent()
+    public void StreamingResponseContent_ReturnsEveryChunkImmediatelyWithoutCoalescing()
     {
-        var buffer = new StreamingResponseBuffer();
-        var updateCount = 0;
+        var response = new StreamingResponseContent();
         for (var index = 0; index < 5_000; index++)
         {
-            buffer.AppendReasoning("r");
-            if (buffer.ShouldFlush)
-            {
-                updateCount += buffer.Drain().Updates.Count;
-            }
+            var update = response.AppendReasoning("r");
+            Assert.Equal(ChatStreamUpdateKind.Reasoning, update.Kind);
+            Assert.Equal("r", update.Content);
         }
 
-        buffer.AppendText("Answer");
+        var answer = response.AppendText("Answer");
+        Assert.Equal(ChatStreamUpdateKind.Text, answer.Kind);
+        Assert.Equal("Answer", answer.Content);
         for (var index = 0; index < 5_000; index++)
         {
-            buffer.AppendText("t");
-            if (buffer.ShouldFlush)
-            {
-                updateCount += buffer.Drain().Updates.Count;
-            }
+            var update = response.AppendText("t");
+            Assert.Equal(ChatStreamUpdateKind.Text, update.Kind);
+            Assert.Equal("t", update.Content);
         }
 
-        var (content, updates) = buffer.Drain();
+        var content = response.GetContent();
 
         Assert.Contains("````thinking\n" + new string('r', 5_000), content);
         Assert.EndsWith("Answer" + new string('t', 5_000), content);
-        Assert.Equal(6, updateCount + updates.Count);
-        Assert.Single(updates);
-        Assert.Equal(ChatStreamUpdateKind.Text, updates[0].Kind);
     }
 
     [Fact]

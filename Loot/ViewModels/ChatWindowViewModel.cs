@@ -3,7 +3,6 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Channels;
 using System.Diagnostics;
 using Avalonia.Input;
 using Avalonia.Platform.Storage;
@@ -464,36 +463,10 @@ public sealed partial class ChatWindowViewModel : ViewModelBase
         _sendCancellation = new CancellationTokenSource();
         IsSending = true;
 
-        var channel = Channel.CreateBounded<ChatStreamUpdate>(new BoundedChannelOptions(256)
-        {
-            FullMode = BoundedChannelFullMode.Wait,
-            SingleReader = true,
-            SingleWriter = true
-        });
-
-        var producerTask = Task.Run(async () =>
-        {
-            try
-            {
-                var selectedTools = SelectedToolNames;
-                await foreach (var update in _chat.SendStreamingAsync(_conversation.Id, text, attachments, selectedTools, CleanMode, _sendCancellation.Token)
-                                   .ConfigureAwait(false))
-                    await channel.Writer.WriteAsync(update, _sendCancellation.Token).ConfigureAwait(false);
-                channel.Writer.TryComplete();
-            }
-            catch (OperationCanceledException)
-            {
-                channel.Writer.TryComplete();
-            }
-            catch (Exception ex)
-            {
-                channel.Writer.TryComplete(ex);
-            }
-        }, _sendCancellation.Token);
-
         try
         {
-            await foreach (var update in channel.Reader.ReadAllAsync(_sendCancellation.Token))
+            var selectedTools = SelectedToolNames;
+            await foreach (var update in _chat.SendStreamingAsync(_conversation.Id, text, attachments, selectedTools, CleanMode, _sendCancellation.Token))
             {
                 if (update.Kind == ChatStreamUpdateKind.Reasoning && !string.IsNullOrEmpty(update.Content))
                 {
@@ -522,7 +495,6 @@ public sealed partial class ChatWindowViewModel : ViewModelBase
                 assistant.AppendText(update.Content);
             }
 
-            await producerTask;
             await RefreshConversationHistoryAsync();
         }
         catch (OperationCanceledException exception)

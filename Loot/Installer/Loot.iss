@@ -3,7 +3,7 @@
 #endif
 
 #ifndef SourceDir
-  #define SourceDir "..\bin\Release\net10.0\win-x64\publish"
+  #define SourceDir "..\bin\Release\net11.0\win-x64\publish"
 #endif
 
 #ifndef OutputDir

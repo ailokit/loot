@@ -46,6 +46,7 @@ public sealed class DatabaseMigrator(SqliteDatabase database)
         // migration without actually changing the table (for example after an
         // interrupted or partially deployed upgrade).
         await EnsureCronJobOneTimeColumnAsync(connection, transaction, cancellationToken).ConfigureAwait(false);
+        await EnsureMessageErrorColumnsAsync(connection, transaction, cancellationToken).ConfigureAwait(false);
 
         await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
     }
@@ -124,6 +125,43 @@ public sealed class DatabaseMigrator(SqliteDatabase database)
                 connection,
                 transaction,
                 "ALTER TABLE CronJobs ADD COLUMN IsOneTime INTEGER NOT NULL DEFAULT 0;",
+                cancellationToken).ConfigureAwait(false);
+        }
+    }
+
+    private static async Task EnsureMessageErrorColumnsAsync(SqliteConnection connection, SqliteTransaction transaction, CancellationToken cancellationToken)
+    {
+        await using var tableCommand = connection.CreateCommand();
+        tableCommand.Transaction = transaction;
+        tableCommand.CommandText = "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'Messages' LIMIT 1;";
+        if (await tableCommand.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) is null)
+        {
+            return;
+        }
+
+        await EnsureMessageColumnAsync(connection, transaction, "ErrorCode", cancellationToken).ConfigureAwait(false);
+        await EnsureMessageColumnAsync(connection, transaction, "ErrorMessage", cancellationToken).ConfigureAwait(false);
+    }
+
+    private static async Task EnsureMessageColumnAsync(SqliteConnection connection, SqliteTransaction transaction, string columnName, CancellationToken cancellationToken)
+    {
+        await using var command = connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText = "SELECT 1 FROM pragma_table_info('Messages') WHERE name = $columnName LIMIT 1;";
+        command.Parameters.AddWithValue("$columnName", columnName);
+        var columnExists = await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) is not null;
+
+        if (!columnExists)
+        {
+            var sqlType = columnName switch
+            {
+                "ErrorCode" or "ErrorMessage" => "TEXT NULL",
+                _ => throw new ArgumentOutOfRangeException(nameof(columnName), columnName, "Unsupported message column.")
+            };
+            await ExecuteAsync(
+                connection,
+                transaction,
+                $"ALTER TABLE Messages ADD COLUMN {columnName} {sqlType};",
                 cancellationToken).ConfigureAwait(false);
         }
     }
