@@ -5,6 +5,7 @@ using Loot.Data;
 using Loot.Jobs;
 using Loot.Localization;
 using Loot.Logging;
+using Loot.Plugins;
 using Loot.Services;
 using Loot.ViewModels;
 using Loot.Views;
@@ -37,6 +38,8 @@ public static class ServiceCollectionExtensions
         services.AddTransient<LazyServiceProvider>();
         services.AddSingleton<DatabaseInitializer>();
         services.AddSingleton<DataDirectoryService>();
+        services.AddSingleton<PluginCatalog>();
+        services.AddSingleton<IPluginScriptRuntimeFactory, QuickJsPluginScriptRuntimeFactory>();
         services.AddSingleton<MessageRepository>();
         services.AddSingleton<AppSettingRepository>();
         services.AddSingleton<IPlatformNotificationService, PlatformNotificationService>();
@@ -72,6 +75,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<HistorySettingsViewModel>();
         services.AddScoped<ScheduledJobsSettingsViewModel>();
         services.AddScoped<AboutSettingsViewModel>();
+        services.AddScoped<PluginSettingsViewModel>();
+        services.AddScoped<PluginToolWindow>();
 
         services.AddLootAi();
         return services;

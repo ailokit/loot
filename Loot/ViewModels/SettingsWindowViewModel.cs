@@ -20,6 +20,7 @@ public sealed partial class SettingsWindowViewModel : ViewModelBase
     public const string HistorySettingsPage = "history";
     public const string ScheduledJobsSettingsPage = "scheduled-jobs";
     public const string AboutSettingsPage = "about";
+    public const string PluginsSettingsPage = "plugins";
 
     private readonly LocalizationService _localization;
 

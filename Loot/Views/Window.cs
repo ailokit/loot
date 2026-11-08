@@ -3,9 +3,11 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform;
 using Loot;
+using Loot.Logging;
 using Material.Icons;
 using Material.Icons.Avalonia;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System.Runtime.InteropServices;
 
 namespace Loot.Views;
@@ -52,12 +54,12 @@ public abstract class Window : Avalonia.Controls.Window
 
         WindowDecorations = WindowDecorations.Full;
         ExtendClientAreaToDecorationsHint = true;
-        if (this.FindControl<StackPanel>("CustomWindowButtons") is { } buttons)
+        if (TryFindControl<StackPanel>("CustomWindowButtons") is { } buttons)
         {
             buttons.IsVisible = false;
         }
 
-        if (this.FindControl<StackPanel>("TitleContent") is { } titleContent)
+        if (TryFindControl<StackPanel>("TitleContent") is { } titleContent)
         {
             titleContent.Margin = new Thickness(72, 0, 12, 0);
         }
@@ -86,11 +88,21 @@ public abstract class Window : Avalonia.Controls.Window
 
     private void UpdateMaximizeIcon()
     {
-        if (this.FindControl<MaterialIcon>("MaximizeIcon") is { } maximizeIcon)
+        if (TryFindControl<MaterialIcon>("MaximizeIcon") is { } maximizeIcon)
         {
             maximizeIcon.Kind = WindowState == WindowState.Maximized
                 ? MaterialIconKind.WindowRestore
                 : MaterialIconKind.WindowMaximize;
+        }
+    }
+
+    private T? TryFindControl<T>(string name) where T : Control
+    {
+        try { return this.FindControl<T>(name); }
+        catch (InvalidOperationException exception)
+        {
+            ExceptionLogger.Log(exception, nameof(Window), $"No name scope is available while looking for '{name}'.", LogLevel.Debug);
+            return null;
         }
     }
 
@@ -139,7 +151,11 @@ public abstract class Window : Avalonia.Controls.Window
     {
         base.OnOpened(e);
         UpdateMaximizeIcon();
-        EnableNativeWindowChrome();
+        try { EnableNativeWindowChrome(); }
+        catch (Exception exception)
+        {
+            ExceptionLogger.Log(exception, nameof(Window), "Could not configure native window chrome", LogLevel.Warning);
+        }
     }
 
     private void EnableNativeWindowChrome()

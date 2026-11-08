@@ -10,6 +10,8 @@
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
         <IsAotCompatible>true</IsAotCompatible>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <BuildQuickJsNative Condition="'$(BuildQuickJsNative)' == '' and '$(Configuration)' == 'Debug'">true</BuildQuickJsNative>
+        <QuickJsBuildDirectory>$(BaseIntermediateOutputPath)quickjs-native/$(Configuration)/$(RuntimeIdentifier)</QuickJsBuildDirectory>
     </PropertyGroup>
 
     <!-- The compiled XAML metadata is loaded by Avalonia through assembly
@@ -47,6 +49,41 @@
         <Delete Files="@(PublishedDebugFiles)" />
         <RemoveDir Directories="@(PublishedDebugDirectories)" />
     </Target>
+
+    <Target Name="BuildQuickJsNativeForOutput" BeforeTargets="Build" Condition="'$(BuildQuickJsNative)' == 'true'">
+        <Exec Condition="$([MSBuild]::IsOSPlatform('OSX')) Or $([MSBuild]::IsOSPlatform('Linux'))"
+              Command="bash &quot;$(MSBuildProjectDirectory)/../native/quickjs/build-native.sh&quot; &quot;$(MSBuildProjectDirectory)/..&quot; &quot;$(QuickJsBuildDirectory)&quot;"
+              ContinueOnError="WarnAndContinue" />
+        <Exec Condition="$([MSBuild]::IsOSPlatform('Windows'))"
+              Command="cmake -S &quot;$(MSBuildProjectDirectory)/../native/quickjs&quot; -B &quot;$(QuickJsBuildDirectory)&quot; -DCMAKE_BUILD_TYPE=$(Configuration)"
+              ContinueOnError="WarnAndContinue" />
+        <Exec Condition="$([MSBuild]::IsOSPlatform('Windows'))"
+              Command="cmake --build &quot;$(QuickJsBuildDirectory)&quot; --config $(Configuration) --target loot_qjs"
+              ContinueOnError="WarnAndContinue" />
+        <ItemGroup>
+            <QuickJsNativeLibrary Include="$(QuickJsBuildDirectory)/**/loot_qjs.dll" Condition="$([MSBuild]::IsOSPlatform('Windows'))" />
+            <QuickJsNativeLibrary Include="$(QuickJsBuildDirectory)/**/libloot_qjs.dylib" Condition="$([MSBuild]::IsOSPlatform('OSX'))" />
+            <QuickJsNativeLibrary Include="$(QuickJsBuildDirectory)/**/libloot_qjs.so" Condition="$([MSBuild]::IsOSPlatform('Linux'))" />
+        </ItemGroup>
+        <Error Condition="'@(QuickJsNativeLibrary)' == '' and '$(Configuration)' != 'Debug'" Text="QuickJS-NG native library was not produced." />
+        <Copy Condition="'@(QuickJsNativeLibrary)' != ''" SourceFiles="@(QuickJsNativeLibrary)" DestinationFolder="$(OutDir)" />
+        <Copy Condition="'@(QuickJsNativeLibrary)' != ''" SourceFiles="$(QuickJsBuildDirectory)/QuickJS-NG-LICENSE.txt;$(MSBuildProjectDirectory)/../native/quickjs/THIRD-PARTY-NOTICES.md" DestinationFolder="$(OutDir)" />
+    </Target>
+
+    <Target Name="CopyQuickJsNativeToPublish" AfterTargets="Publish" Condition="'$(BuildQuickJsNative)' == 'true'">
+        <ItemGroup>
+            <QuickJsPublishLibrary Include="$(QuickJsBuildDirectory)/**/loot_qjs.dll" Condition="$([MSBuild]::IsOSPlatform('Windows'))" />
+            <QuickJsPublishLibrary Include="$(QuickJsBuildDirectory)/**/libloot_qjs.dylib" Condition="$([MSBuild]::IsOSPlatform('OSX'))" />
+            <QuickJsPublishLibrary Include="$(QuickJsBuildDirectory)/**/libloot_qjs.so" Condition="$([MSBuild]::IsOSPlatform('Linux'))" />
+        </ItemGroup>
+        <Error Condition="'@(QuickJsPublishLibrary)' == ''" Text="QuickJS-NG native library was not produced." />
+        <Copy SourceFiles="@(QuickJsPublishLibrary)" DestinationFolder="$(PublishDir)" />
+        <Copy SourceFiles="$(QuickJsBuildDirectory)/QuickJS-NG-LICENSE.txt;$(MSBuildProjectDirectory)/../native/quickjs/THIRD-PARTY-NOTICES.md" DestinationFolder="$(PublishDir)" />
+    </Target>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Loot.JsonRender.Avalonia\Loot.JsonRender.Avalonia.csproj" />
+    </ItemGroup>
 
     <ItemGroup>
         <!-- Only embed assets that are read by the running UI. The macOS .icns

@@ -1,0 +1,20 @@
+{
+  "manifestVersion": 1,
+  "id": "loot.example.hello",
+  "name": "问候示例",
+  "version": "1.0.0",
+  "description": "演示 Loot 插件、Avalonia JSON UI 和 JavaScript action。",
+  "author": "Loot",
+  "loot": { "minVersion": "0.1.0", "maxVersion": "0.x" },
+  "runtime": { "apiVersion": 1 },
+  "tools": [
+    {
+      "id": "hello",
+      "name": "问候",
+      "description": "输入名字并生成问候语。",
+      "ui": "tools/hello/ui.json",
+      "entry": "tools/hello/main.js"
+    }
+  ],
+  "capabilities": []
+}

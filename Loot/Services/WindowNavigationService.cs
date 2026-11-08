@@ -3,7 +3,10 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Loot.ViewModels;
 using Loot.Views;
+using Loot.Plugins;
+using Loot.Logging;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Loot.Services;
 
@@ -21,6 +24,7 @@ namespace Loot.Services;
 public sealed class WindowNavigationService(IServiceScopeFactory scopeFactory) : IWindowNavigationService
 {
     private SettingsWindow? _settingsWindow;
+    private readonly Dictionary<string, PluginToolWindow> _pluginWindows = new(StringComparer.OrdinalIgnoreCase);
 
     public void ShowSettings()
     {
@@ -30,6 +34,64 @@ public sealed class WindowNavigationService(IServiceScopeFactory scopeFactory) :
     public void ShowSkillSettings()
     {
         ShowSettings(SettingsWindowViewModel.SkillsSettingsPage);
+    }
+
+    public void ShowPluginTool(string pluginId, string toolId)
+    {
+        var key = $"{pluginId}/{toolId}";
+        IServiceScope? scope = null;
+        PluginToolWindow? window = null;
+        try
+        {
+            if (_pluginWindows.TryGetValue(key, out var existing) && existing.IsVisible)
+            {
+                existing.Activate();
+                existing.Focus();
+                return;
+            }
+
+            scope = scopeFactory.CreateScope();
+            window = scope.ServiceProvider.GetRequiredService<PluginToolWindow>();
+            window.SetScope(scope);
+            window.PluginId = pluginId;
+            window.ToolId = toolId;
+            window.Closed += (_, _) =>
+            {
+                if (_pluginWindows.TryGetValue(key, out var current) && ReferenceEquals(current, window))
+                    _pluginWindows.Remove(key);
+            };
+            _pluginWindows[key] = window;
+            window.Show();
+            window.Activate();
+        }
+        catch (Exception exception)
+        {
+            ExceptionLogger.Log(exception, nameof(WindowNavigationService), $"Failed to open plugin tool '{pluginId}/{toolId}'", LogLevel.Warning);
+            _pluginWindows.Remove(key);
+            if (window is not null)
+            {
+                try { window.Close(); }
+                catch
+                {
+                    try { scope?.Dispose(); }
+                    catch { }
+                }
+            }
+            else
+            {
+                try { scope?.Dispose(); }
+                catch { }
+            }
+        }
+    }
+
+    public void ClosePluginTools(string pluginId)
+    {
+        foreach (var window in _pluginWindows.Where(pair => pair.Key.StartsWith(pluginId + "/", StringComparison.OrdinalIgnoreCase)).Select(pair => pair.Value).ToArray())
+        {
+            try { window.Close(); }
+            catch (Exception exception) { ExceptionLogger.Log(exception, nameof(WindowNavigationService), $"Failed to close plugin tool window for '{pluginId}'", LogLevel.Warning); }
+        }
     }
 
     private void ShowSettings(string pageKey)

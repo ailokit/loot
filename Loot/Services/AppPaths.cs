@@ -27,6 +27,14 @@ public sealed class AppPaths
     /// <summary>Stores only local skill availability overrides; skill definitions always come from disk.</summary>
     public string SkillsAvailabilityPath => Path.Combine(ApplicationDataDirectory, "skills-availability.json");
 
+    /// <summary>Root for installed Loot plugin packages.</summary>
+    public string PluginsDirectory => Path.Combine(ApplicationDataDirectory, "plugins");
+
+    /// <summary>Host-owned persistent data for plugins, kept separate from installed package files.</summary>
+    public string PluginsDataDirectory => Path.Combine(ApplicationDataDirectory, "plugins-data");
+
+    public string PluginsStatePath => Path.Combine(ApplicationDataDirectory, "plugins-state.json");
+
     public string DefaultWorkspaceDirectory => Path.Combine(ApplicationDataDirectory, "default-workspace");
 
     public static AppPaths CreateDefault()
@@ -53,7 +61,15 @@ public sealed class AppPaths
         Directory.CreateDirectory(ExportsDirectory);
         Directory.CreateDirectory(AttachmentsDirectory);
         Directory.CreateDirectory(SkillsDirectory);
+        Directory.CreateDirectory(PluginsDirectory);
+        Directory.CreateDirectory(PluginsDataDirectory);
         Directory.CreateDirectory(DefaultWorkspaceDirectory);
+    }
+
+    public string GetPluginDataDirectory(string pluginId)
+    {
+        Loot.Plugins.PluginCatalog.ValidateId(pluginId, "plugin");
+        return Path.Combine(PluginsDataDirectory, pluginId);
     }
 
 }

@@ -281,5 +281,7 @@ public sealed class ChatWindowViewModelTests : IDisposable
 
         public void ShowSettings() => SettingsCount++;
         public void ShowSkillSettings() => SkillSettingsCount++;
+        public void ShowPluginTool(string pluginId, string toolId) { }
+        public void ClosePluginTools(string pluginId) { }
     }
 }

@@ -87,6 +87,7 @@ internal partial class SettingsWindow : Window
             SettingsWindowViewModel.HistorySettingsPage => CreatePage<HistorySettingsView, HistorySettingsViewModel>(_ => Task.CompletedTask),
             SettingsWindowViewModel.ScheduledJobsSettingsPage => CreatePage<ScheduledJobsSettingsView, ScheduledJobsSettingsViewModel>(vm => vm.LoadAsync()),
             SettingsWindowViewModel.AboutSettingsPage => CreatePage<AboutSettingsView, AboutSettingsViewModel>(vm => { vm.LoadFromState(); return Task.CompletedTask; }),
+            SettingsWindowViewModel.PluginsSettingsPage => CreatePage<PluginSettingsView, PluginSettingsViewModel>(vm => vm.RefreshAsync()),
             _ => CreatePage<GeneralSettingsView, GeneralSettingsViewModel>(vm => vm.LoadAsync())
         };
 

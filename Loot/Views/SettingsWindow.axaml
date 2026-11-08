@@ -83,6 +83,12 @@
                                 <TextBlock Text="{Binding Localization[Tools]}"/>
                             </StackPanel>
                         </ListBoxItem>
+                        <ListBoxItem Tag="plugins" HorizontalContentAlignment="Stretch" Padding="8,8,16,8">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <materialIcons:MaterialIcon Kind="PuzzleOutline" Width="18" Height="18"/>
+                                <TextBlock Text="插件"/>
+                            </StackPanel>
+                        </ListBoxItem>
                         <ListBoxItem Tag="mcp" HorizontalContentAlignment="Stretch" Padding="8,8,16,8">
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <materialIcons:MaterialIcon Kind="Connection" Width="18" Height="18"/>

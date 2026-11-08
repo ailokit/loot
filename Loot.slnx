@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="Loot.Tests/Loot.Tests.csproj" />
+  <Project Path="Loot.JsonRender.Avalonia/Loot.JsonRender.Avalonia.csproj" />
   <Project Path="Loot/Loot.csproj" />
 </Solution>
