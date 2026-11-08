@@ -22,6 +22,7 @@ add_library(quickjs_ng_static STATIC
 set_target_properties(quickjs_ng_static PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_include_directories(quickjs_ng_static PUBLIC ${quickjs_ng_SOURCE_DIR})
 target_compile_definitions(quickjs_ng_static PRIVATE _GNU_SOURCE)
+target_compile_features(quickjs_ng_static PRIVATE c_std_11)
 find_package(Threads REQUIRED)
 target_link_libraries(quickjs_ng_static PUBLIC ${CMAKE_DL_LIBS} Threads::Threads)
 if(UNIX)
