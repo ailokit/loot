@@ -21,9 +21,9 @@ jobs:
       - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.0.x
-      - run: dotnet restore Ailo.slnx
-      - run: dotnet build Ailo.slnx --configuration Release --no-restore
-      - run: dotnet test Ailo.slnx --configuration Release --no-build --logger "trx;LogFileName=test-results.trx"
+      - run: dotnet restore Loot.slnx
+      - run: dotnet build Loot.slnx --configuration Release --no-restore
+      - run: dotnet test Loot.slnx --configuration Release --no-build --logger "trx;LogFileName=test-results.trx"
       - uses: actions/upload-artifact@v6
         if: always()
         with:
@@ -47,7 +47,7 @@ jobs:
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
         run: |
           set -euo pipefail
-          version_file="Ailo/Ailo.csproj"
+          version_file="Loot/Loot.csproj"
           tag_version="${GITHUB_REF_NAME#v}"
 
           if [[ ! "$tag_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
@@ -112,8 +112,8 @@ jobs:
       - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.0.x
-      - run: dotnet restore Ailo/Ailo.csproj --runtime ${{ matrix.rid }} --property:Configuration=Release -p:SelfContained=true -p:PublishAot=true -p:PublishTrimmed=true
-      - run: dotnet publish Ailo/Ailo.csproj --configuration Release --runtime ${{ matrix.rid }} --self-contained true --no-restore --output artifacts/${{ matrix.rid }}/publish -p:Version=${{ steps.version.outputs.version }} -p:PublishAot=true -p:PublishTrimmed=true -p:DebugSymbols=false -p:DebugType=None -p:StripSymbols=true
+      - run: dotnet restore Loot/Loot.csproj --runtime ${{ matrix.rid }} --property:Configuration=Release -p:SelfContained=true -p:PublishAot=true -p:PublishTrimmed=true
+      - run: dotnet publish Loot/Loot.csproj --configuration Release --runtime ${{ matrix.rid }} --self-contained true --no-restore --output artifacts/${{ matrix.rid }}/publish -p:Version=${{ steps.version.outputs.version }} -p:PublishAot=true -p:PublishTrimmed=true -p:DebugSymbols=false -p:DebugType=None -p:StripSymbols=true
       - name: Create macOS application bundle
         if: startsWith(matrix.rid, 'osx-')
         shell: bash
@@ -121,26 +121,26 @@ jobs:
           APP_VERSION: ${{ steps.version.outputs.version }}
         run: |
           publish_dir="artifacts/${{ matrix.rid }}/publish"
-          app_dir="artifacts/${{ matrix.rid }}/Ailo.app"
+          app_dir="artifacts/${{ matrix.rid }}/Loot.app"
           mkdir -p "$app_dir/Contents/MacOS"
           mkdir -p "$app_dir/Contents/Resources"
           cp -R "$publish_dir"/. "$app_dir/Contents/MacOS/"
-          cp "$GITHUB_WORKSPACE/Ailo/Assets/Ailo.icns" "$app_dir/Contents/Resources/Ailo.icns"
+          cp "$GITHUB_WORKSPACE/Loot/Assets/Loot.icns" "$app_dir/Contents/Resources/Loot.icns"
           cat > "$app_dir/Contents/Info.plist" <<EOF
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
           <plist version="1.0">
           <dict>
               <key>CFBundleDisplayName</key>
-              <string>Ailo</string>
+              <string>千机</string>
               <key>CFBundleExecutable</key>
-              <string>Ailo</string>
+              <string>Loot</string>
               <key>CFBundleIconFile</key>
-              <string>Ailo.icns</string>
+              <string>Loot.icns</string>
               <key>CFBundleIdentifier</key>
-              <string>com.ailo.app</string>
+              <string>com.loot.app</string>
               <key>CFBundleName</key>
-              <string>Ailo</string>
+              <string>Loot</string>
               <key>CFBundlePackageType</key>
               <string>APPL</string>
               <key>CFBundleShortVersionString</key>
@@ -154,7 +154,7 @@ jobs:
           </dict>
           </plist>
           EOF
-          chmod +x "$app_dir/Contents/MacOS/Ailo"
+          chmod +x "$app_dir/Contents/MacOS/Loot"
           rm -rf "$publish_dir"
       - name: Validate macOS code-signing configuration
         if: startsWith(matrix.rid, 'osx-')
@@ -177,8 +177,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          certificate_path="$RUNNER_TEMP/ailo-signing-certificate.p12"
-          keychain_path="$RUNNER_TEMP/ailo-signing.keychain-db"
+          certificate_path="$RUNNER_TEMP/loot-signing-certificate.p12"
+          keychain_path="$RUNNER_TEMP/loot-signing.keychain-db"
           echo "$MACOS_CERTIFICATE_BASE64" | base64 --decode > "$certificate_path"
           security create-keychain -p "$MACOS_CERTIFICATE_PASSWORD" "$keychain_path"
           security set-keychain-settings -lut 21600 "$keychain_path"
@@ -205,15 +205,15 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          app_dir="artifacts/${{ matrix.rid }}/Ailo.app"
-          designated_requirement="=designated => identifier \"com.ailo.app\" and anchor = H\"${MACOS_RESOLVED_SIGNING_IDENTITY}\""
+          app_dir="artifacts/${{ matrix.rid }}/Loot.app"
+          designated_requirement="=designated => identifier \"com.loot.app\" and anchor = H\"${MACOS_RESOLVED_SIGNING_IDENTITY}\""
           # Self-signed certificates cannot use Apple's secure timestamp service.
           # Supply the designated requirement explicitly so every release uses
           # the same application identifier and self-signed certificate anchor.
           # Sign nested Mach-O files first. Using codesign --deep for signing can
           # rewrite them after the outer bundle's resource seal has been created.
           while IFS= read -r -d '' nested_file; do
-            if [[ "$nested_file" == "$app_dir/Contents/MacOS/Ailo" ]]; then
+            if [[ "$nested_file" == "$app_dir/Contents/MacOS/Loot" ]]; then
               continue
             fi
             # macOS codesign treats .NET DLLs inside Contents/MacOS as generic
@@ -244,15 +244,15 @@ jobs:
             echo "::error::Refusing to publish an ad-hoc signed macOS application."
             exit 1
           fi
-          if ! grep -q '^Identifier=com\.ailo\.app$' <<< "$signature_info"; then
-            echo "::error::The signed application identifier is not com.ailo.app."
+          if ! grep -q '^Identifier=com\.loot\.app$' <<< "$signature_info"; then
+            echo "::error::The signed application identifier is not com.loot.app."
             exit 1
           fi
           if grep -q '^designated => cdhash ' <<< "$signature_info"; then
             echo "::error::The application still has a version-specific ad-hoc designated requirement."
             exit 1
           fi
-          if ! grep -Fq "identifier \"com.ailo.app\"" <<< "$signature_info" || \
+          if ! grep -Fq "identifier \"com.loot.app\"" <<< "$signature_info" || \
              ! grep -Eqi "(anchor( =)?|certificate root =) H\"${MACOS_RESOLVED_SIGNING_IDENTITY}\"" <<< "$signature_info"; then
             echo "::error::The application does not have the expected stable self-signed designated requirement."
             exit 1
@@ -262,20 +262,20 @@ jobs:
       - name: Package macOS application
         if: startsWith(matrix.rid, 'osx-')
         shell: bash
-        run: ditto -c -k --sequesterRsrc --keepParent "artifacts/${{ matrix.rid }}/Ailo.app" "artifacts/ailo-${{ matrix.rid }}-${{ steps.version.outputs.tag }}.zip"
+        run: ditto -c -k --sequesterRsrc --keepParent "artifacts/${{ matrix.rid }}/Loot.app" "artifacts/loot-${{ matrix.rid }}-${{ steps.version.outputs.tag }}.zip"
       - name: Create macOS disk image
         if: startsWith(matrix.rid, 'osx-')
         shell: bash
         run: |
-          staging_dir="$(mktemp -d "${RUNNER_TEMP}/ailo-dmg.XXXXXX")"
-          cp -R "artifacts/${{ matrix.rid }}/Ailo.app" "$staging_dir/Ailo.app"
+          staging_dir="$(mktemp -d "${RUNNER_TEMP}/loot-dmg.XXXXXX")"
+          cp -R "artifacts/${{ matrix.rid }}/Loot.app" "$staging_dir/Loot.app"
           ln -s "/Applications" "$staging_dir/Applications"
           hdiutil create \
-            -volname "Ailo" \
+            -volname "Loot" \
             -srcfolder "$staging_dir" \
             -ov \
             -format UDZO \
-            "artifacts/ailo-${{ matrix.rid }}-${{ steps.version.outputs.tag }}.dmg"
+            "artifacts/loot-${{ matrix.rid }}-${{ steps.version.outputs.tag }}.dmg"
       - name: Install Inno Setup
         if: startsWith(matrix.rid, 'win-')
         shell: pwsh
@@ -294,10 +294,10 @@ jobs:
         run: |
           $publishDir = Join-Path $env:GITHUB_WORKSPACE "artifacts\${{ matrix.rid }}\publish"
           $artifactDir = Join-Path $env:GITHUB_WORKSPACE "artifacts\${{ matrix.rid }}"
-          $portableZip = Join-Path $env:GITHUB_WORKSPACE "artifacts\ailo-${{ matrix.rid }}-${{ steps.version.outputs.tag }}.zip"
-          $appExecutable = Join-Path $publishDir "Ailo.exe"
-          $issPath = Join-Path $env:GITHUB_WORKSPACE "Ailo\Installer\Ailo.iss"
-          $setupIcon = Join-Path $env:GITHUB_WORKSPACE "Ailo\Assets\ailo.ico"
+          $portableZip = Join-Path $env:GITHUB_WORKSPACE "artifacts\loot-${{ matrix.rid }}-${{ steps.version.outputs.tag }}.zip"
+          $appExecutable = Join-Path $publishDir "Loot.exe"
+          $issPath = Join-Path $env:GITHUB_WORKSPACE "Loot\Installer\Loot.iss"
+          $setupIcon = Join-Path $env:GITHUB_WORKSPACE "Loot\Assets\loot.ico"
 
           if (-not (Test-Path $appExecutable)) {
             Get-ChildItem -Path $publishDir -Force | Format-Table Name, Length, Mode
@@ -325,7 +325,7 @@ jobs:
             "/DAppVersion=$env:APP_VERSION" `
             "/DSourceDir=$publishDir" `
             "/DOutputDir=$artifactDir" `
-            "/DOutputBaseName=ailo-${{ matrix.rid }}-${{ steps.version.outputs.tag }}-setup" `
+            "/DOutputBaseName=loot-${{ matrix.rid }}-${{ steps.version.outputs.tag }}-setup" `
             "/DSetupIcon=$setupIcon" `
             $issPath
           if ($LASTEXITCODE -ne 0) {
@@ -335,26 +335,26 @@ jobs:
         if: startsWith(matrix.rid, 'win-')
         uses: actions/upload-artifact@v6
         with:
-          name: ailo-${{ matrix.rid }}-${{ steps.version.outputs.tag }}
+          name: loot-${{ matrix.rid }}-${{ steps.version.outputs.tag }}
           path: |
-            artifacts/ailo-${{ matrix.rid }}-${{ steps.version.outputs.tag }}.zip
+            artifacts/loot-${{ matrix.rid }}-${{ steps.version.outputs.tag }}.zip
           if-no-files-found: error
       - name: Upload Windows setup packages
         if: startsWith(matrix.rid, 'win-')
         uses: actions/upload-artifact@v6
         with:
-          name: ailo-${{ matrix.rid }}-${{ steps.version.outputs.tag }}-setup
+          name: loot-${{ matrix.rid }}-${{ steps.version.outputs.tag }}-setup
           path: |
-            artifacts/${{ matrix.rid }}/ailo-${{ matrix.rid }}-${{ steps.version.outputs.tag }}-setup.exe
+            artifacts/${{ matrix.rid }}/loot-${{ matrix.rid }}-${{ steps.version.outputs.tag }}-setup.exe
           if-no-files-found: error
       - name: Upload macOS packages
         if: startsWith(matrix.rid, 'osx-')
         uses: actions/upload-artifact@v6
         with:
-          name: ailo-${{ matrix.rid }}-${{ steps.version.outputs.tag }}
+          name: loot-${{ matrix.rid }}-${{ steps.version.outputs.tag }}
           path: |
-            artifacts/ailo-${{ matrix.rid }}-${{ steps.version.outputs.tag }}.zip
-            artifacts/ailo-${{ matrix.rid }}-${{ steps.version.outputs.tag }}.dmg
+            artifacts/loot-${{ matrix.rid }}-${{ steps.version.outputs.tag }}.zip
+            artifacts/loot-${{ matrix.rid }}-${{ steps.version.outputs.tag }}.dmg
           if-no-files-found: error
 
   release:
@@ -366,7 +366,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v7
         with:
-          pattern: ailo-*
+          pattern: loot-*
           path: release-assets
           merge-multiple: true
       - name: Create GitHub Release
@@ -374,4 +374,4 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TAG_NAME: ${{ github.ref_name }}
           GITHUB_REPOSITORY: ${{ github.repository }}
-        run: gh release create "$TAG_NAME" release-assets/* --repo "$GITHUB_REPOSITORY" --title "Ailo $TAG_NAME" --generate-notes
+        run: gh release create "$TAG_NAME" release-assets/* --repo "$GITHUB_REPOSITORY" --title "Loot $TAG_NAME" --generate-notes

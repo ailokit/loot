@@ -5,10 +5,10 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "C#: Ailo Debug",
+      "name": "C#: Loot Debug",
       "type": "dotnet",
       "request": "launch",
-      "projectPath": "${workspaceFolder}/Ailo/Ailo.csproj"
+      "projectPath": "${workspaceFolder}/Loot/Loot.csproj"
     }
 
 
