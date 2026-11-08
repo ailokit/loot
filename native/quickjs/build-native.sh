@@ -26,6 +26,17 @@ if [ ! -f "$quickjs_dir/quickjs.h" ] || [ "$(cat "$quickjs_dir/.loot-commit" 2>/
   printf '%s\n' d7215b0 > "$quickjs_dir/.loot-commit"
 fi
 
+void_return_count=$(grep -cF 'return js_free_cstring(ctx->rt, ptr);' "$quickjs_dir/quickjs.c" || true)
+if [ "$void_return_count" -gt 0 ]; then
+  if [ "$void_return_count" -ne 4 ]; then
+    echo "Expected four upstream JS_FreeCString void-return warnings, found $void_return_count" >&2
+    exit 1
+  fi
+  sed 's/return js_free_cstring(ctx->rt, ptr);/js_free_cstring(ctx->rt, ptr);/' \
+    "$quickjs_dir/quickjs.c" > "$quickjs_dir/quickjs.c.patched"
+  mv "$quickjs_dir/quickjs.c.patched" "$quickjs_dir/quickjs.c"
+fi
+
 if [ "$(uname -s)" = "Darwin" ]; then
   library="$build_dir/libloot_qjs.dylib"
   [ -f "$library" ] && [ "$library" -nt "$repo_root/native/quickjs/loot_qjs.c" ] && [ "$library" -nt "$repo_root/native/quickjs/build-native.sh" ] && [ "$library" -nt "$quickjs_dir/quickjs.c" ] && exit 0

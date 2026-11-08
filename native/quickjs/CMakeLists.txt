@@ -12,6 +12,8 @@ FetchContent_GetProperties(quickjs_ng)
 if(NOT quickjs_ng_POPULATED)
   FetchContent_Populate(quickjs_ng)
 endif()
+set(QUICKJS_SOURCE_DIR "${quickjs_ng_SOURCE_DIR}")
+include(${CMAKE_CURRENT_LIST_DIR}/patch-quickjs.cmake)
 configure_file(${quickjs_ng_SOURCE_DIR}/LICENSE ${CMAKE_CURRENT_BINARY_DIR}/QuickJS-NG-LICENSE.txt COPYONLY)
 
 add_library(quickjs_ng_static STATIC

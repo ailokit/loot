@@ -1,0 +1,16 @@
+if(NOT DEFINED QUICKJS_SOURCE_DIR)
+  message(FATAL_ERROR "QUICKJS_SOURCE_DIR is required")
+endif()
+
+set(quickjs_file "${QUICKJS_SOURCE_DIR}/quickjs.c")
+file(READ "${quickjs_file}" quickjs_source)
+string(REGEX MATCHALL "return js_free_cstring\\(ctx->rt, ptr\\);" unpatched_returns "${quickjs_source}")
+list(LENGTH unpatched_returns unpatched_count)
+
+if(unpatched_count GREATER 0)
+  if(NOT unpatched_count EQUAL 4)
+    message(FATAL_ERROR "Expected four upstream JS_FreeCString void-return warnings, found ${unpatched_count}")
+  endif()
+  string(REPLACE "return js_free_cstring(ctx->rt, ptr);" "js_free_cstring(ctx->rt, ptr);" quickjs_source "${quickjs_source}")
+  file(WRITE "${quickjs_file}" "${quickjs_source}")
+endif()
