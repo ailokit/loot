@@ -125,12 +125,12 @@ jobs:
           mkdir -p "$app_dir/Contents/MacOS"
           mkdir -p "$app_dir/Contents/Resources"
           cp -R "$publish_dir"/. "$app_dir/Contents/MacOS/"
-          # macOS treats files inside Contents/MacOS as code during deep
-          # signature verification. Keep the notices document in Resources,
-          # where it is sealed as ordinary bundle data.
-          if [[ -f "$app_dir/Contents/MacOS/THIRD-PARTY-NOTICES.md" ]]; then
-            mv "$app_dir/Contents/MacOS/THIRD-PARTY-NOTICES.md" "$app_dir/Contents/Resources/THIRD-PARTY-NOTICES.md"
-          fi
+          # Keep documentation and license files in Resources. Deep signature
+          # verification treats files left in Contents/MacOS as code objects.
+          while IFS= read -r -d '' bundle_data; do
+            mv "$bundle_data" "$app_dir/Contents/Resources/"
+          done < <(find "$app_dir/Contents/MacOS" -maxdepth 1 -type f \
+            \( -name '*.md' -o -name '*.txt' \) -print0)
           cp "$GITHUB_WORKSPACE/Loot/Assets/Loot.icns" "$app_dir/Contents/Resources/Loot.icns"
           cat > "$app_dir/Contents/Info.plist" <<EOF
           <?xml version="1.0" encoding="UTF-8"?>
