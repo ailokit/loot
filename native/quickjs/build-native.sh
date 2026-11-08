@@ -26,13 +26,13 @@ if [ ! -f "$quickjs_dir/quickjs.h" ] || [ "$(cat "$quickjs_dir/.loot-commit" 2>/
   printf '%s\n' d7215b0 > "$quickjs_dir/.loot-commit"
 fi
 
-void_return_count=$(grep -cF 'return js_free_cstring(ctx->rt, ptr);' "$quickjs_dir/quickjs.c" || true)
+void_return_count=$(grep -Ec 'return js_free_cstring\((ctx->rt|rt), ptr\);' "$quickjs_dir/quickjs.c" || true)
 if [ "$void_return_count" -gt 0 ]; then
   if [ "$void_return_count" -ne 4 ]; then
     echo "Expected four upstream JS_FreeCString void-return warnings, found $void_return_count" >&2
     exit 1
   fi
-  sed 's/return js_free_cstring(ctx->rt, ptr);/js_free_cstring(ctx->rt, ptr);/' \
+  sed -E 's/return js_free_cstring\((ctx->rt|rt), ptr\);/js_free_cstring(\1, ptr);/' \
     "$quickjs_dir/quickjs.c" > "$quickjs_dir/quickjs.c.patched"
   mv "$quickjs_dir/quickjs.c.patched" "$quickjs_dir/quickjs.c"
 fi
