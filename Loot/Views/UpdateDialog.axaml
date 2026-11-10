@@ -1,12 +1,15 @@
-<Window xmlns="https://github.com/avaloniaui"
+<local:LootWindow xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="using:Loot.Views"
         x:Class="Loot.Views.UpdateDialog"
         SizeToContent="WidthAndHeight"
         CanResize="False"
+        CanMinimize="False"
+        CanMaximize="False"
         ShowInTaskbar="False"
         WindowStartupLocation="CenterOwner"
         Icon="/Assets/loot.ico">
-    <StackPanel Grid.Row="1" Margin="24" Spacing="14">
+    <StackPanel Margin="24" Spacing="14">
         <TextBlock x:Name="MessageText" FontSize="18" FontWeight="Bold"/>
         <TextBlock x:Name="VersionText" TextWrapping="Wrap"/>
         <TextBlock x:Name="ReleaseText" TextWrapping="Wrap"
@@ -16,4 +19,4 @@
             <Button x:Name="UpdateButton" Classes="primary-button" Click="OnUpdateClick" Padding="12,7"/>
         </StackPanel>
     </StackPanel>
-</Window>
+</local:LootWindow>

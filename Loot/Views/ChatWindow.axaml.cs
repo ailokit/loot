@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Loot.Views;
 
-internal partial class ChatWindow : Window
+internal partial class ChatWindow : LootWindow
 {
     private readonly ChatWindowViewModel _viewModel;
     private readonly IGlobalHotKeyService _globalHotKeys;
@@ -39,7 +39,6 @@ internal partial class ChatWindow : Window
         DraftTextBox.AddHandler(KeyDownEvent, OnDraftKeyDown, RoutingStrategies.Tunnel);
         DraftTextBox.AddHandler(TextBox.PastingFromClipboardEvent, OnDraftPastingFromClipboard, RoutingStrategies.Tunnel);
         Activated += OnWindowActivated;
-        ConfigurePlatformTitleBar();
     }
 
     protected override void OnOpened(EventArgs e)

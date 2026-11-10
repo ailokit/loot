@@ -2,8 +2,9 @@ using Avalonia.Interactivity;
 
 namespace Loot.Views;
 
-public partial class ConfirmationDialog : Avalonia.Controls.Window
+public partial class ConfirmationDialog : LootWindow
 {
+    protected override bool HideOnClose => false;
     public ConfirmationDialog() => InitializeComponent();
 
     public ConfirmationDialog(string title, string message, string cancelLabel, string deleteLabel, string? warningMessage = null)

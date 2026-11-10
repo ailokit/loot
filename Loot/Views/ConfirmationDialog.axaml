@@ -1,8 +1,11 @@
-<Window xmlns="https://github.com/avaloniaui"
+<local:LootWindow xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="using:Loot.Views"
         x:Class="Loot.Views.ConfirmationDialog"
         SizeToContent="WidthAndHeight"
         CanResize="False"
+        CanMinimize="False"
+        CanMaximize="False"
         ShowInTaskbar="False"
         WindowStartupLocation="CenterOwner"
         Icon="/Assets/loot.ico">
@@ -18,4 +21,4 @@
             <Button x:Name="DeleteButton" Classes="primary-button" Click="OnDeleteClick" Padding="12,7"/>
         </StackPanel>
     </StackPanel>
-</Window>
+</local:LootWindow>

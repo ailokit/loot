@@ -1,5 +1,6 @@
-<Window xmlns="https://github.com/avaloniaui"
+<local:LootWindow xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="using:Loot.Views"
         xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         xmlns:localization="clr-namespace:Loot.Localization"
         x:Class="Loot.Views.ImageViewerWindow"
@@ -54,4 +55,4 @@
             </Image>
         </ScrollViewer>
     </Grid>
-</Window>
+</local:LootWindow>

@@ -3,8 +3,9 @@ using Avalonia.Interactivity;
 namespace Loot.Views;
 
 /// <summary>A user-dismissible notification surface that remains above other application windows.</summary>
-internal sealed partial class TopmostNotificationWindow : Avalonia.Controls.Window
+internal sealed partial class TopmostNotificationWindow : LootWindow
 {
+    protected override bool HideOnClose => false;
     public TopmostNotificationWindow(string title, string body, string? subtitle)
     {
         InitializeComponent();

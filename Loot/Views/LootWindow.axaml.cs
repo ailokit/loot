@@ -17,8 +17,11 @@ namespace Loot.Views;
 /// and DI scope management. Each window owns a dedicated <see cref="IServiceScope"/> that is
 /// disposed when the window closes, guaranteeing transient resources are cleaned up promptly.
 /// </summary>
-public abstract class Window : Avalonia.Controls.Window
+public abstract class LootWindow : Avalonia.Controls.Window
 {
+    public static readonly StyledProperty<Control?> CustomTitleBarButtonsProperty =
+        AvaloniaProperty.Register<LootWindow, Control?>(nameof(CustomTitleBarButtons));
+
     private const int WindowStyleIndex = -16;
     private const long WindowStyleCaption = 0x00C00000L;
     private const long WindowStyleSystemMenu = 0x00080000L;
@@ -31,6 +34,25 @@ public abstract class Window : Avalonia.Controls.Window
     private const uint SetWindowPosNoZOrder = 0x0004;
     private const int DwmWindowCornerPreferenceAttribute = 33;
     private const int DwmWindowCornerPreferenceRound = 2;
+
+    private readonly LootWindowChrome _chrome;
+    private bool _routingContent;
+
+    protected LootWindow()
+    {
+        WindowDecorations = WindowDecorations.None;
+        ExtendClientAreaToDecorationsHint = true;
+        _chrome = new LootWindowChrome();
+        _chrome.CustomTitleBarButtonsHost.Content = CustomTitleBarButtons;
+        Content = _chrome;
+    }
+
+    /// <summary>Gets or sets controls displayed before the standard window buttons.</summary>
+    public Control? CustomTitleBarButtons
+    {
+        get => GetValue(CustomTitleBarButtonsProperty);
+        set => SetValue(CustomTitleBarButtonsProperty, value);
+    }
 
     /// <summary>The DI scope that owns this window and all its transient dependencies.</summary>
     protected IServiceScope? Scope { get; private set; }
@@ -45,72 +67,56 @@ public abstract class Window : Avalonia.Controls.Window
     /// <summary>Gets whether a close request should hide the window unless the application is exiting.</summary>
     protected virtual bool HideOnClose => true;
 
-    protected void ConfigurePlatformTitleBar()
+    private void ConfigurePlatformTitleBar()
     {
         if (!OperatingSystem.IsMacOS())
-        {
             return;
-        }
 
         WindowDecorations = WindowDecorations.Full;
         ExtendClientAreaToDecorationsHint = true;
-        if (TryFindControl<StackPanel>("CustomWindowButtons") is { } buttons)
-        {
-            buttons.IsVisible = false;
-        }
-
-        if (TryFindControl<StackPanel>("TitleContent") is { } titleContent)
-        {
-            titleContent.Margin = new Thickness(72, 0, 12, 0);
-        }
+        _chrome.StandardWindowButtons.IsVisible = false;
+        _chrome.TitleText.Margin = new Thickness(72, 0, 12, 0);
     }
 
-    protected void OnMinimizeWindow(object? sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
-
-    protected void OnToggleMaximizeWindow(object? sender, RoutedEventArgs e) =>
-        SetWindowState(WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized);
-
-    protected void OnCloseWindow(object? sender, RoutedEventArgs e)
+    private void OnCloseWindow(object? sender, RoutedEventArgs e)
     {
         if (HideOnClose)
         {
             Hide();
             return;
         }
-
         Close();
     }
 
-    private void SetWindowState(WindowState state)
-    {
-        WindowState = state;
-    }
+    internal void MinimizeFromTitleBar() => WindowState = WindowState.Minimized;
 
-    private void UpdateMaximizeIcon()
-    {
-        if (TryFindControl<MaterialIcon>("MaximizeIcon") is { } maximizeIcon)
-        {
-            maximizeIcon.Kind = WindowState == WindowState.Maximized
-                ? MaterialIconKind.WindowRestore
-                : MaterialIconKind.WindowMaximize;
-        }
-    }
+    internal void ToggleMaximizeFromTitleBar() =>
+        WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
 
-    private T? TryFindControl<T>(string name) where T : Control
-    {
-        try { return this.FindControl<T>(name); }
-        catch (InvalidOperationException exception)
-        {
-            ExceptionLogger.Log(exception, nameof(Window), $"No name scope is available while looking for '{name}'.", LogLevel.Debug);
-            return null;
-        }
-    }
+    internal void CloseFromTitleBar() => OnCloseWindow(this, new RoutedEventArgs());
+
+    private void UpdateMaximizeIcon() => _chrome.UpdateMaximizeIcon(WindowState);
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
 
-        if (change.Property == WindowStateProperty)
+        if (change.Property == CustomTitleBarButtonsProperty)
+        {
+            _chrome.CustomTitleBarButtonsHost.Content = CustomTitleBarButtons;
+        }
+        else if (change.Property == ContentProperty && !_routingContent && !ReferenceEquals(Content, _chrome))
+        {
+            var childContent = Content;
+            _routingContent = true;
+            try
+            {
+                Content = _chrome;
+                _chrome.WindowContentPresenter.Content = childContent;
+            }
+            finally { _routingContent = false; }
+        }
+        else if (change.Property == WindowStateProperty)
         {
             UpdateMaximizeIcon();
         }
@@ -150,11 +156,12 @@ public abstract class Window : Avalonia.Controls.Window
     protected override void OnOpened(EventArgs e)
     {
         base.OnOpened(e);
+        ConfigurePlatformTitleBar();
         UpdateMaximizeIcon();
         try { EnableNativeWindowChrome(); }
         catch (Exception exception)
         {
-            ExceptionLogger.Log(exception, nameof(Window), "Could not configure native window chrome", LogLevel.Warning);
+            ExceptionLogger.Log(exception, nameof(LootWindow), "Could not configure native window chrome", LogLevel.Warning);
         }
     }
 
@@ -252,4 +259,21 @@ public abstract class Window : Avalonia.Controls.Window
         int width,
         int height,
         uint flags);
+}
+
+internal partial class LootWindowChrome : UserControl
+{
+    public LootWindowChrome() => InitializeComponent();
+
+    public void UpdateMaximizeIcon(WindowState state) =>
+        MaximizeIcon.Kind = state == WindowState.Maximized ? MaterialIconKind.WindowRestore : MaterialIconKind.WindowMaximize;
+
+    private void OnMinimizeWindow(object? sender, RoutedEventArgs e) =>
+        (TopLevel.GetTopLevel(this) as LootWindow)?.MinimizeFromTitleBar();
+
+    private void OnToggleMaximizeWindow(object? sender, RoutedEventArgs e) =>
+        (TopLevel.GetTopLevel(this) as LootWindow)?.ToggleMaximizeFromTitleBar();
+
+    private void OnCloseWindow(object? sender, RoutedEventArgs e) =>
+        (TopLevel.GetTopLevel(this) as LootWindow)?.CloseFromTitleBar();
 }

@@ -1,4 +1,4 @@
-<Window xmlns="https://github.com/avaloniaui"
+<local:LootWindow xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:Loot.Views"
         x:Class="Loot.Views.TopmostNotificationWindow"
@@ -6,6 +6,8 @@
         Icon="/Assets/loot.ico"
         Topmost="True"
         CanResize="False"
+        CanMinimize="False"
+        CanMaximize="False"
         SizeToContent="WidthAndHeight"
         MinWidth="320"
         MaxWidth="560"
@@ -35,4 +37,4 @@
                 HorizontalAlignment="Right"
                 Click="OnClose" />
     </StackPanel>
-</Window>
+</local:LootWindow>

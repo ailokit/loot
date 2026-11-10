@@ -7,7 +7,7 @@ using System.ComponentModel;
 
 namespace Loot.Views;
 
-internal partial class SettingsWindow : Window
+internal partial class SettingsWindow : LootWindow
 {
     private readonly SettingsWindowViewModel _viewModel;
 
@@ -24,7 +24,6 @@ internal partial class SettingsWindow : Window
         _viewModel = viewModel;
         DataContext = viewModel;
         InitializeComponent();
-        ConfigurePlatformTitleBar();
         _viewModel.PropertyChanged += OnViewModelPropertyChanged;
     }
 

@@ -10,7 +10,7 @@ public sealed class ChatWindowManager
     private readonly SemaphoreSlim _lock = new(1, 1);
 
     private IServiceScope? _groupScope;
-    private readonly List<Window> _chatWindows = [];
+    private readonly List<LootWindow> _chatWindows = [];
 
     public ChatWindowManager(
         IServiceScopeFactory scopeFactory, AppState appState)
@@ -117,7 +117,7 @@ public sealed class ChatWindowManager
         }
     }
 
-    private async Task InitialWindowAsync(Window window, string? conversationId = null)
+    private async Task InitialWindowAsync(LootWindow window, string? conversationId = null)
     {
         var vm = window.DataContext as ChatWindowViewModel;
         if (vm is null)
@@ -153,7 +153,7 @@ public sealed class ChatWindowManager
     }
 
     private async Task ReleaseWindowAsync(
-        Window window,
+        LootWindow window,
         AsyncServiceScope windowScope)
     {
         // ---------------------------------

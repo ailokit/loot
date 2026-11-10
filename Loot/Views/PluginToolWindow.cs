@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Loot.Views;
 
-internal sealed class PluginToolWindow : Window
+internal sealed class PluginToolWindow : LootWindow
 {
     private readonly PluginCatalog _catalog;
     private readonly IPluginScriptRuntimeFactory _runtimeFactory;

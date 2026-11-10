@@ -9,8 +9,9 @@ using System.ComponentModel;
 namespace Loot.Views;
 
 /// <summary>Displays an attachment at a user-controlled zoom level.</summary>
-internal partial class ImageViewerWindow : Avalonia.Controls.Window
+internal partial class ImageViewerWindow : LootWindow
 {
+    protected override bool HideOnClose => false;
     private const double MinimumZoom = 0.1;
     private const double MaximumZoom = 8;
     private const double ZoomStep = 1.25;

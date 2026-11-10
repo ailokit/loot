@@ -129,6 +129,9 @@
 
     <ItemGroup>
       <Compile Remove="Converters\**" />
+      <Compile Update="Views\LootWindow.axaml.cs">
+        <DependentUpon>LootWindow.axaml</DependentUpon>
+      </Compile>
     </ItemGroup>
 
     <ItemGroup>

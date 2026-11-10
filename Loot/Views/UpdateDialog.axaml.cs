@@ -9,8 +9,9 @@ public enum UpdateDialogMode
     Install
 }
 
-public partial class UpdateDialog : Window
+public partial class UpdateDialog : LootWindow
 {
+    protected override bool HideOnClose => false;
     private readonly LocalizationService _localization = null!;
 
     public UpdateDialog() => InitializeComponent();
