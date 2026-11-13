@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@v6
       - uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 10.0.x
+          dotnet-version: 11.0.x
       - run: dotnet restore Loot.slnx
       - run: dotnet build Loot.slnx --configuration Release --no-restore
       - run: dotnet test Loot.slnx --configuration Release --no-build --logger "trx;LogFileName=test-results.trx"
@@ -111,7 +111,7 @@ jobs:
           echo "tag=$TAG_NAME" >> "$GITHUB_OUTPUT"
       - uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 10.0.x
+          dotnet-version: 11.0.x
       - run: dotnet restore Loot/Loot.csproj --runtime ${{ matrix.rid }} --property:Configuration=Release -p:SelfContained=true -p:PublishAot=true -p:PublishTrimmed=true
       - run: dotnet publish Loot/Loot.csproj --configuration Release --runtime ${{ matrix.rid }} --self-contained true --no-restore --output artifacts/${{ matrix.rid }}/publish -p:BuildQuickJsNative=true -p:Version=${{ steps.version.outputs.version }} -p:PublishAot=true -p:PublishTrimmed=true -p:DebugSymbols=false -p:DebugType=None -p:StripSymbols=true
       - name: Create macOS application bundle

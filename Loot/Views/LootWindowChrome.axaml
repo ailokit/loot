@@ -45,21 +45,21 @@
             </Grid>
         </Border>
         <ContentPresenter x:Name="WindowContentPresenter" Grid.Row="1" />
-        <Border Grid.RowSpan="2" Height="6" VerticalAlignment="Top" Background="Transparent"
+        <Border Grid.Row="0" Grid.RowSpan="2" Height="6" VerticalAlignment="Top" Background="Transparent"
                 WindowDecorationProperties.ElementRole="ResizeN" />
-        <Border Grid.RowSpan="2" Height="6" VerticalAlignment="Bottom" Background="Transparent"
+        <Border Grid.Row="0" Grid.RowSpan="2" Height="6" VerticalAlignment="Bottom" Background="Transparent"
                 WindowDecorationProperties.ElementRole="ResizeS" />
-        <Border Grid.RowSpan="2" Width="6" HorizontalAlignment="Left" Background="Transparent"
+        <Border Grid.Row="0" Grid.RowSpan="2" Width="6" HorizontalAlignment="Left" Background="Transparent"
                 WindowDecorationProperties.ElementRole="ResizeW" />
-        <Border Grid.RowSpan="2" Width="6" HorizontalAlignment="Right" Background="Transparent"
+        <Border Grid.Row="0" Grid.RowSpan="2" Width="6" HorizontalAlignment="Right" Background="Transparent"
                 WindowDecorationProperties.ElementRole="ResizeE" />
-        <Border Grid.RowSpan="2" Width="10" Height="10" HorizontalAlignment="Left" VerticalAlignment="Top" Background="Transparent"
+        <Border Grid.Row="0" Grid.RowSpan="2" Width="10" Height="10" HorizontalAlignment="Left" VerticalAlignment="Top" Background="Transparent"
                 WindowDecorationProperties.ElementRole="ResizeNW" />
-        <Border Grid.RowSpan="2" Width="10" Height="10" HorizontalAlignment="Right" VerticalAlignment="Top" Background="Transparent"
+        <Border Grid.Row="0" Grid.RowSpan="2" Width="10" Height="10" HorizontalAlignment="Right" VerticalAlignment="Top" Background="Transparent"
                 WindowDecorationProperties.ElementRole="ResizeNE" />
-        <Border Grid.RowSpan="2" Width="10" Height="10" HorizontalAlignment="Left" VerticalAlignment="Bottom" Background="Transparent"
+        <Border Grid.Row="0" Grid.RowSpan="2" Width="10" Height="10" HorizontalAlignment="Left" VerticalAlignment="Bottom" Background="Transparent"
                 WindowDecorationProperties.ElementRole="ResizeSW" />
-        <Border Grid.RowSpan="2" Width="10" Height="10" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="Transparent"
+        <Border Grid.Row="0" Grid.RowSpan="2" Width="10" Height="10" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="Transparent"
                 WindowDecorationProperties.ElementRole="ResizeSE" />
     </Grid>
 </UserControl>
