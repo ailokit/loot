@@ -13,7 +13,7 @@
                         <TextBlock Text="{Binding Localization[New]}"/>
                     </StackPanel>
                 </Button>
-                <Button Classes="primary-button"
+                <Button Classes="danger"
                         Command="{Binding DeleteProviderCommand}"
                         CommandParameter="{Binding SelectedProvider}"
                         Padding="10,5">
@@ -29,7 +29,7 @@
                     </StackPanel>
                 </Button>
             </StackPanel>
-            <TextBlock Text="{Binding Localization[ApiKeyManagement]}" FontSize="22" FontWeight="Bold"/>
+            <TextBlock Text="{Binding Localization[ApiKeyManagement]}" FontSize="18" FontWeight="Bold"/>
         </DockPanel>
 
         <Grid Grid.Row="1" ColumnDefinitions="250,*" ColumnSpacing="14">
@@ -67,7 +67,7 @@
             <Border Grid.Column="1" Classes="card" Padding="14">
                 <ScrollViewer Padding="0">
                     <StackPanel Spacing="16">
-                        <TextBlock Text="{Binding SelectedProvider.Name}" FontSize="16" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding SelectedProvider.Name}" FontSize="15" FontWeight="SemiBold"/>
 
                         <!-- 1. Provider Name -->
                         <StackPanel Spacing="8">

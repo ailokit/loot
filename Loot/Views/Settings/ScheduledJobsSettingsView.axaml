@@ -13,7 +13,7 @@
                         <TextBlock Text="{Binding Localization[JobSettings]}"/>
                     </StackPanel>
                 </Button>
-                <Button Classes="primary-button" Command="{Binding DeleteJobCommand}" IsVisible="{Binding IsJobDetailsVisible}" Padding="10,5">
+                <Button Classes="danger" Command="{Binding DeleteJobCommand}" IsVisible="{Binding IsJobDetailsVisible}" Padding="10,5">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <materialIcons:MaterialIcon Kind="Delete" Width="16" Height="16"/>
                         <TextBlock Text="{Binding Localization[Delete]}"/>
@@ -26,7 +26,7 @@
                     </StackPanel>
                 </Button>
             </StackPanel>
-            <TextBlock Text="{Binding Localization[JobsSettings]}" FontSize="22" FontWeight="Bold"/>
+            <TextBlock Text="{Binding Localization[JobsSettings]}" FontSize="18" FontWeight="Bold"/>
         </DockPanel>
 
         <Grid Grid.Row="1" ColumnDefinitions="250,*" ColumnSpacing="14">
@@ -63,7 +63,7 @@
                                 <Button DockPanel.Dock="Right" Command="{Binding ShowJobDetailsCommand}" Padding="10,5">
                                     <TextBlock Text="{Binding Localization[BackToJobDetails]}"/>
                                 </Button>
-                                <TextBlock Text="{Binding Localization[JobSettings]}" FontSize="16" FontWeight="SemiBold"
+                                <TextBlock Text="{Binding Localization[JobSettings]}" FontSize="15" FontWeight="SemiBold"
                                            VerticalAlignment="Center"/>
                             </DockPanel>
                             <TextBlock Text="{Binding Localization[JobSettingsDescription]}" Opacity="0.7" TextWrapping="Wrap"/>
@@ -73,7 +73,7 @@
                         </StackPanel>
 
                         <StackPanel IsVisible="{Binding IsJobDetailsVisible}" Spacing="10">
-                            <TextBlock Text="{Binding Localization[JobDetails]}" FontSize="16" FontWeight="SemiBold"/>
+                            <TextBlock Text="{Binding Localization[JobDetails]}" FontSize="15" FontWeight="SemiBold"/>
                             <TextBlock Text="{Binding Localization[JobId]}" Opacity="0.7"/>
                             <TextBox Text="{Binding SelectedJob.Id}" IsReadOnly="True"/>
                             <TextBlock Text="{Binding Localization[JobType]}" Opacity="0.7"/>

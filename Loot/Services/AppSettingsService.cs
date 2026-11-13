@@ -21,7 +21,7 @@ public sealed class AppSettingsService(AppSettingRepository repository)
     public const string ShellToolEnabledKey = "ai.shell-tool-enabled";
     public const string JobMaxRuntimeKey = "jobs.max-runtime-seconds";
     public const string DefaultTheme = "system";
-    public const string DefaultAccentColor = "#0EA5E9";
+    public const string DefaultAccentColor = "#4F6BF5";
     public const string DefaultLanguage = "zh-CN";
     public static string DefaultChatShortcut => OperatingSystem.IsMacOS() ? "Meta+Shift+Space" : "Ctrl+Shift+Space";
     public const string DefaultNewChatWindowShortcut = "";

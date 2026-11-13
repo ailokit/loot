@@ -11,10 +11,11 @@
     <Grid x:Name="WindowLayout" ColumnDefinitions="auto,*">
             <Border Padding="16">
                 <Grid RowDefinitions="Auto,Auto" RowSpacing="10">
-                    <TextBlock Text="{Binding Localization[Settings]}" FontSize="20" FontWeight="Bold" Margin="0,0,0,12"/>
+                    <TextBlock Text="{Binding Localization[Settings]}" FontSize="18" FontWeight="Bold" Margin="0,0,0,12"/>
                     <Border Grid.Row="1" Classes="settings-navigation-menu" VerticalAlignment="Top">
                         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                         <ListBox x:Name="SettingsNavigation" SelectionMode="Single"
+                                 Background="Transparent" BorderThickness="0" BorderBrush="Transparent"
                                  SelectionChanged="OnSettingsSelectionChanged" CornerRadius="{DynamicResource CornerRadiusCompact}">
                         <ListBoxItem Tag="general" HorizontalContentAlignment="Stretch" Padding="8,8,16,8">
                             <StackPanel Orientation="Horizontal" Spacing="8">

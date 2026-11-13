@@ -28,8 +28,22 @@
     <Application.Styles>
         <FluentTheme>
             <FluentTheme.Palettes>
-                <fluent:ColorPaletteResources x:Key="Light" />
-                <fluent:ColorPaletteResources x:Key="Dark" />
+                <fluent:ColorPaletteResources x:Key="Light"
+                    Accent="#4F6BF5"
+                    BaseHigh="#171A24" BaseMediumHigh="#62697A" BaseMedium="#747B8D" BaseMediumLow="#9298A6" BaseLow="#F6F7F9"
+                    AltHigh="#FFFFFF" AltMediumHigh="#E3E6ED" AltMedium="#EEF1F5" AltMediumLow="#F6F7F9" AltLow="#FFFFFF"
+                    ChromeHigh="#171A24" ChromeMedium="#62697A" ChromeMediumLow="#9298A6" ChromeLow="#F0F1F5" ChromeAltLow="#F6F7F9"
+                    ChromeWhite="#FFFFFF" ChromeBlackHigh="#171A24" ChromeBlackMedium="#62697A" ChromeBlackLow="#9298A6"
+                    ChromeDisabledHigh="#9298A6" ChromeDisabledLow="#E3E6ED"
+                    ListLow="#F0F2F7" ListMedium="#E9EDFF" RegionColor="#FFFFFF" />
+                <fluent:ColorPaletteResources x:Key="Dark"
+                    Accent="#8191FF"
+                    BaseHigh="#F2F3F7" BaseMediumHigh="#A4A9B9" BaseMedium="#9298A6" BaseMediumLow="#747B8D" BaseLow="#101115"
+                    AltHigh="#1A1B22" AltMediumHigh="#30323C" AltMedium="#252731" AltMediumLow="#1A1B22" AltLow="#15161C"
+                    ChromeHigh="#F2F3F7" ChromeMedium="#A4A9B9" ChromeMediumLow="#9298A6" ChromeLow="#15161C" ChromeAltLow="#101115"
+                    ChromeWhite="#F2F3F7" ChromeBlackHigh="#101115" ChromeBlackMedium="#747B8D" ChromeBlackLow="#30323C"
+                    ChromeDisabledHigh="#747B8D" ChromeDisabledLow="#30323C"
+                    ListLow="#252731" ListMedium="#292D47" RegionColor="#1A1B22" />
             </FluentTheme.Palettes>
         </FluentTheme>
         <materialIcons:MaterialIconStyles />
@@ -40,12 +54,59 @@
         <Style Selector="markdown|CodeBlock:dark">
             <Setter Property="ColorTheme" Value="VisualStudioDark" />
         </Style>
-        <!-- Shared modern surface language layered on top of Fluent. -->
+        <!-- Loot UI tokens: compact desktop controls with matching light and dark palettes. -->
+        <Style Selector="Window">
+            <Setter Property="Background" Value="{DynamicResource AppBackgroundBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        </Style>
+        <Style Selector="TextBlock">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        </Style>
+        <Style Selector=":is(Control):disabled">
+            <Setter Property="Opacity" Value="0.56" />
+        </Style>
+        <Style Selector=":is(Button):focus">
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlHighlightAltAccentBrush}" />
+            <Setter Property="BorderThickness" Value="2" />
+        </Style>
+        <Style Selector=":is(Button):pressed">
+            <Setter Property="Opacity" Value="0.9" />
+        </Style>
+        <!-- Shared compact control language layered on top of Fluent. -->
         <Style Selector=":is(Button)">
             <Setter Property="CornerRadius" Value="{DynamicResource CornerRadiusButton}" />
             <Setter Property="MinHeight" Value="32" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Padding" Value="12,6" />
+            <Setter Property="Background" Value="{DynamicResource DefaultButtonBackgroundBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource DefaultButtonForegroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource DefaultButtonBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+        <Style Selector=":is(Button):pointerover">
+            <Setter Property="Background" Value="{DynamicResource DefaultButtonHoverBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource DefaultButtonHoverBorderBrush}" />
+        </Style>
+        <Style Selector=":is(Button):pressed">
+            <Setter Property="Background" Value="{DynamicResource DefaultButtonPressedBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource DefaultButtonPressedBorderBrush}" />
+        </Style>
+        <Style Selector=":is(Button).default, :is(Button).default-button">
+            <Setter Property="Background" Value="{DynamicResource DefaultButtonBackgroundBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource DefaultButtonForegroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource DefaultButtonBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+        <Style Selector=":is(Button).default:pointerover, :is(Button).default-button:pointerover">
+            <Setter Property="Background" Value="{DynamicResource DefaultButtonHoverBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource DefaultButtonHoverBorderBrush}" />
+        </Style>
+        <Style Selector=":is(Button).default:pressed, :is(Button).default-button:pressed">
+            <Setter Property="Background" Value="{DynamicResource DefaultButtonPressedBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource DefaultButtonPressedBorderBrush}" />
         </Style>
         <Style Selector=":is(Button) /template/ ContentPresenter">
             <Setter Property="CornerRadius" Value="{DynamicResource CornerRadiusButton}" />
@@ -57,22 +118,56 @@
         <Style Selector=":is(Button) materialIcons|MaterialIcon">
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
-        <Style Selector=":is(Button).primary-button">
+        <Style Selector=":is(Button).primary, :is(Button).primary-button">
             <Setter Property="CornerRadius" Value="{DynamicResource CornerRadiusControl}" />
-            <Setter Property="Padding" Value="12,7" />
+            <Setter Property="Padding" Value="12,6" />
             <Setter Property="HorizontalContentAlignment" Value="Center" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="Background" Value="{DynamicResource PrimaryButtonBackgroundBrush}" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlHighlightAltAccentBrush}" />
             <Setter Property="Foreground" Value="{DynamicResource PrimaryButtonForegroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlHighlightAltAccentBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
         </Style>
-        <Style Selector=":is(Button).primary-button /template/ ContentPresenter">
+        <Style Selector=":is(Button).primary /template/ ContentPresenter, :is(Button).primary-button /template/ ContentPresenter">
             <Setter Property="CornerRadius" Value="{DynamicResource CornerRadiusControl}" />
         </Style>
-        <Style Selector=":is(Button).primary-button:pointerover">
-            <Setter Property="Background" Value="{DynamicResource PrimaryButtonHoverBackgroundBrush}" />
+        <Style Selector=":is(Button).primary:pointerover, :is(Button).primary-button:pointerover">
+            <Setter Property="Opacity" Value="0.92" />
         </Style>
-        <Style Selector=":is(Button).primary-button:pressed">
-            <Setter Property="Background" Value="{DynamicResource PrimaryButtonPressedBackgroundBrush}" />
+        <Style Selector=":is(Button).primary:pressed, :is(Button).primary-button:pressed">
+            <Setter Property="Opacity" Value="0.84" />
+        </Style>
+        <Style Selector=":is(Button).warning, :is(Button).warning-button">
+            <Setter Property="Background" Value="{DynamicResource WarningButtonBackgroundBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource WarningButtonForegroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource WarningButtonBackgroundBrush}" />
+        </Style>
+        <Style Selector=":is(Button).warning:pointerover, :is(Button).warning-button:pointerover">
+            <Setter Property="Background" Value="{DynamicResource WarningButtonHoverBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource WarningButtonHoverBackgroundBrush}" />
+        </Style>
+        <Style Selector=":is(Button).warning:pressed, :is(Button).warning-button:pressed">
+            <Setter Property="Background" Value="{DynamicResource WarningButtonPressedBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource WarningButtonPressedBackgroundBrush}" />
+        </Style>
+        <Style Selector=":is(Button).warning:focus, :is(Button).warning-button:focus">
+            <Setter Property="BorderBrush" Value="{DynamicResource WarningButtonHoverBackgroundBrush}" />
+        </Style>
+        <Style Selector=":is(Button).danger, :is(Button).danger-button">
+            <Setter Property="Background" Value="{DynamicResource DangerButtonBackgroundBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource DangerButtonForegroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource DangerButtonBackgroundBrush}" />
+        </Style>
+        <Style Selector=":is(Button).danger:pointerover, :is(Button).danger-button:pointerover">
+            <Setter Property="Background" Value="{DynamicResource DangerButtonHoverBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource DangerButtonHoverBackgroundBrush}" />
+        </Style>
+        <Style Selector=":is(Button).danger:pressed, :is(Button).danger-button:pressed">
+            <Setter Property="Background" Value="{DynamicResource DangerButtonPressedBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource DangerButtonPressedBackgroundBrush}" />
+        </Style>
+        <Style Selector=":is(Button).danger:focus, :is(Button).danger-button:focus">
+            <Setter Property="BorderBrush" Value="{DynamicResource DangerButtonHoverBackgroundBrush}" />
         </Style>
         <Style Selector=":is(Button).model-selector-button">
             <Setter Property="CornerRadius" Value="{DynamicResource CornerRadiusControl}" />
@@ -90,34 +185,51 @@
         </Style>
         <Style Selector=":is(TextBox)">
             <Setter Property="CornerRadius" Value="{DynamicResource CornerRadiusInput}" />
+            <Setter Property="MinHeight" Value="30" />
+            <Setter Property="FontSize" Value="13" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="BorderBrush" Value="{DynamicResource InputControlBorderBrush}" />
-            <Setter Property="Padding" Value="10,7" />
+            <Setter Property="Padding" Value="10,5" />
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
         </Style>
         <Style Selector=":is(TextBox):focus">
             <Setter Property="BorderBrush" Value="{DynamicResource SystemControlHighlightAltAccentBrush}" />
+            <Setter Property="BorderThickness" Value="2" />
         </Style>
         <Style Selector=":is(ComboBox)">
             <Setter Property="CornerRadius" Value="{DynamicResource CornerRadiusInput}" />
-            <Setter Property="MinHeight" Value="32" />
+            <Setter Property="MinHeight" Value="30" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Background" Value="{DynamicResource ComboBoxBackgroundBrush}" />
             <Setter Property="BorderBrush" Value="{DynamicResource InputControlBorderBrush}" />
         </Style>
         <Style Selector="ComboBox /template/ Border#Background">
             <Setter Property="CornerRadius" Value="{DynamicResource CornerRadiusInput}" />
+            <Setter Property="Background" Value="{DynamicResource ComboBoxBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource InputControlBorderBrush}" />
         </Style>
         <Style Selector="ComboBox /template/ Border#HighlightBackground">
             <Setter Property="CornerRadius" Value="{DynamicResource CornerRadiusInput}" />
+            <Setter Property="Background" Value="{DynamicResource ComboBoxBackgroundBrush}" />
         </Style>
         <!-- ComboBox's popup is hosted in a separate visual tree, so its named border
              must be targeted directly instead of through the ComboBox ancestor. -->
-        <Style Selector="Border#PopupBorder">
+        <Style Selector="ComboBox:dropdownopen /template/ Border#PopupBorder">
             <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
+            <Setter Property="Background" Value="{DynamicResource PopupBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+        <Style Selector="ComboBox:dropdownopen /template/ Border#PopupBorder:light">
+            <Setter Property="BoxShadow" Value="0 4 16 0 #14000000" />
+        </Style>
+        <Style Selector="ComboBox:dropdownopen /template/ Border#PopupBorder:dark">
+            <Setter Property="BoxShadow" Value="0 8 24 0 #40000000" />
         </Style>
         <Style Selector="ComboBoxItem">
             <Setter Property="CornerRadius" Value="{DynamicResource CornerRadiusItem}" />
-            <Setter Property="Padding" Value="10,7" />
+            <Setter Property="Padding" Value="10,6" />
         </Style>
         <Style Selector="ComboBoxItem /template/ Border">
             <Setter Property="CornerRadius" Value="{DynamicResource CornerRadiusItem}" />
@@ -126,7 +238,7 @@
             <Setter Property="Background" Value="{DynamicResource SystemControlHighlightListLowBrush}" />
         </Style>
         <Style Selector="ComboBoxItem:selected">
-            <Setter Property="Background" Value="{DynamicResource SystemControlHighlightAltAccentBrush}" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlHighlightListMediumBrush}" />
         </Style>
         <Style Selector=":is(ListBox)">
             <Setter Property="CornerRadius" Value="{DynamicResource CornerRadiusControl}" />
@@ -139,7 +251,7 @@
             <Setter Property="Background" Value="{DynamicResource SystemControlHighlightListLowBrush}" />
         </Style>
         <Style Selector=":is(ListBoxItem):selected">
-            <Setter Property="Background" Value="{DynamicResource SystemControlHighlightAltAccentBrush}" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlHighlightListMediumBrush}" />
         </Style>
         <Style Selector="Border.settings-list-divider">
             <Setter Property="BorderThickness" Value="0,0,0,1" />
@@ -150,26 +262,53 @@
         <!-- Fluent menus use their own presenter, so apply the shared corner radius directly. -->
         <Style Selector="MenuFlyoutPresenter">
             <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
+            <Setter Property="Background" Value="{DynamicResource PopupBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
         </Style>
         <Style Selector="MenuFlyoutPresenter /template/ Border">
             <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
+            <Setter Property="Background" Value="{DynamicResource PopupBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+        <Style Selector="MenuFlyoutPresenter /template/ Border:light">
+            <Setter Property="BoxShadow" Value="0 4 16 0 #14000000" />
+        </Style>
+        <Style Selector="MenuFlyoutPresenter /template/ Border:dark">
+            <Setter Property="BoxShadow" Value="0 8 24 0 #40000000" />
         </Style>
         <!-- MenuItem submenus use their own popup border instead of a
              MenuFlyoutPresenter, so style that nested surface separately. -->
         <Style Selector="MenuItem /template/ Popup#PART_Popup Border">
             <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
+            <Setter Property="Background" Value="{DynamicResource PopupBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
         </Style>
         <Style Selector="ContextMenu">
             <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
+            <Setter Property="Background" Value="{DynamicResource PopupBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
         </Style>
         <Style Selector="ContextMenu /template/ Border">
             <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
+            <Setter Property="Background" Value="{DynamicResource PopupBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
         </Style>
         <Style Selector="FlyoutPresenter">
             <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
+            <Setter Property="Background" Value="{DynamicResource PopupBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
         </Style>
         <Style Selector="FlyoutPresenter /template/ Border">
             <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
+            <Setter Property="Background" Value="{DynamicResource PopupBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
         </Style>
         <Style Selector="MenuItem">
             <Setter Property="CornerRadius" Value="{DynamicResource CornerRadiusItem}" />
@@ -209,21 +348,20 @@
             <Setter Property="Foreground" Value="White" />
         </Style>
         <Style Selector="Border.card">
-            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}" />
+            <Setter Property="Background" Value="{DynamicResource SurfaceBackgroundBrush}" />
             <Setter Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
-            <Setter Property="BoxShadow" Value="0 4 18 0 #1C000000" />
         </Style>
         <Style Selector="Border.settings-navigation-menu">
             <Setter Property="Background" Value="{DynamicResource SettingsNavigationBackgroundColor}" />
             <Setter Property="CornerRadius" Value="{DynamicResource CornerRadiusCompact}" />
-            <Setter Property="BoxShadow" Value="0 4 18 0 #30000000" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SettingsNavigationBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
         </Style>
         <Style Selector="Border.chat-bubble">
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="CornerRadius" Value="{DynamicResource CornerRadiusCard}" />
-            <Setter Property="BoxShadow" Value="0 2 12 0 #14000000" />
         </Style>
         <Style Selector="Border.chat-bubble-user">
             <Setter Property="Background" Value="{DynamicResource SecondaryCardBackgroundColor}" />
@@ -231,8 +369,21 @@
             <Setter Property="MinWidth" Value="80" />
         </Style>
         <Style Selector="Border.chat-bubble-assistant">
-            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}" />
+            <Setter Property="Background" Value="{DynamicResource SurfaceBackgroundBrush}" />
             <Setter Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}" />
+        </Style>
+        <Style Selector=":is(CheckBox), :is(RadioButton), :is(ToggleSwitch)">
+            <Setter Property="FontSize" Value="13" />
+        </Style>
+        <Style Selector=":is(CheckBox):pointerover, :is(RadioButton):pointerover">
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        </Style>
+        <Style Selector="Slider">
+            <Setter Property="MinHeight" Value="24" />
+        </Style>
+        <Style Selector="ProgressBar">
+            <Setter Property="MinHeight" Value="4" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlHighlightAltAccentBrush}" />
         </Style>
         <Style Selector="Border.thinking-header">
             <Setter Property="TextElement.Foreground" Value="{DynamicResource ThinkingHeaderForegroundColor}" />
@@ -255,36 +406,66 @@
     </Application.Styles>
     <Application.Resources>
         <ResourceDictionary>
-            <!-- Shared corner-radius scale. -->
-            <CornerRadius x:Key="CornerRadiusSmall">6</CornerRadius>
-            <CornerRadius x:Key="CornerRadiusCompact">8</CornerRadius>
-            <CornerRadius x:Key="CornerRadiusItem">9</CornerRadius>
-            <CornerRadius x:Key="CornerRadiusButton">10</CornerRadius>
-            <CornerRadius x:Key="CornerRadiusInput">11</CornerRadius>
-            <CornerRadius x:Key="CornerRadiusControl">12</CornerRadius>
-            <!-- Fluent's MenuItem submenu border binds directly to this resource. -->
-            <CornerRadius x:Key="OverlayCornerRadius">14</CornerRadius>
+            <!-- Design-system geometry: 4 px compact, 6 px controls, 8 px panels. -->
+            <CornerRadius x:Key="CornerRadiusSmall">4</CornerRadius>
+            <CornerRadius x:Key="CornerRadiusCompact">4</CornerRadius>
+            <CornerRadius x:Key="CornerRadiusItem">4</CornerRadius>
+            <CornerRadius x:Key="CornerRadiusButton">6</CornerRadius>
+            <CornerRadius x:Key="CornerRadiusInput">6</CornerRadius>
+            <CornerRadius x:Key="CornerRadiusControl">6</CornerRadius>
+            <CornerRadius x:Key="OverlayCornerRadius">8</CornerRadius>
             <CornerRadius x:Key="CornerRadiusRound">15</CornerRadius>
-            <CornerRadius x:Key="CornerRadiusCard">18</CornerRadius>
+            <CornerRadius x:Key="CornerRadiusCard">8</CornerRadius>
             <!-- GitHub Markdown palette. LiveMarkdown resolves these resources dynamically. -->
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
-                    <SolidColorBrush x:Key="ControlBorderBrush" Color="#D7D7D7" />
-                    <SolidColorBrush x:Key="InputControlBorderBrush" Color="#B1B1B1" />
-                    <Color x:Key="ForegroundColor">#1F2328</Color>
-                    <Color x:Key="ThinkingHeaderForegroundColor">#6E7781</Color>
-                    <Color x:Key="ThinkingContentForegroundColor">#57606A</Color>
-                    <Color x:Key="BorderColor">#D7D7D7</Color>
+                    <SolidColorBrush x:Key="AppBackgroundBrush" Color="#F6F7F9" />
+                    <SolidColorBrush x:Key="SurfaceBackgroundBrush" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="ComboBoxBackgroundBrush" Color="#FBFCFE" />
+                    <SolidColorBrush x:Key="PopupBackgroundBrush" Color="#FBFCFE" />
+                    <SolidColorBrush x:Key="ComboBoxDropDownBackground" Color="#FBFCFE" />
+                    <SolidColorBrush x:Key="ComboBoxDropDownBorderBrush" Color="#E3E6ED" />
+                    <SolidColorBrush x:Key="ComboBoxDropDownForeground" Color="#171A24" />
+                    <Thickness x:Key="ComboBoxDropdownBorderThickness">1</Thickness>
+                    <SolidColorBrush x:Key="MenuFlyoutPresenterBackground" Color="#FBFCFE" />
+                    <SolidColorBrush x:Key="MenuFlyoutPresenterBorderBrush" Color="#E3E6ED" />
+                    <Thickness x:Key="MenuFlyoutPresenterBorderThemeThickness">1</Thickness>
+                    <SolidColorBrush x:Key="FlyoutPresenterBackground" Color="#FBFCFE" />
+                    <SolidColorBrush x:Key="FlyoutBorderThemeBrush" Color="#E3E6ED" />
+                    <Thickness x:Key="FlyoutBorderThemeThickness">1</Thickness>
+                    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#171A24" />
+                    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#62697A" />
+                    <SolidColorBrush x:Key="TextMutedBrush" Color="#9298A6" />
+                    <SolidColorBrush x:Key="ErrorBrush" Color="#DC5260" />
+                    <SolidColorBrush x:Key="ControlBorderBrush" Color="#E3E6ED" />
+                    <SolidColorBrush x:Key="InputControlBorderBrush" Color="#E3E6ED" />
+                    <Color x:Key="ForegroundColor">#171A24</Color>
+                    <Color x:Key="ThinkingHeaderForegroundColor">#62697A</Color>
+                    <Color x:Key="ThinkingContentForegroundColor">#62697A</Color>
+                    <Color x:Key="BorderColor">#E3E6ED</Color>
                     <Color x:Key="CardBackgroundColor">#FFFFFF</Color>
-                    <Color x:Key="SecondaryCardBackgroundColor">#F6F8FA</Color>
-                    <Color x:Key="SettingsNavigationBackgroundColor">#EEF1F5</Color>
-                    <SolidColorBrush x:Key="SettingsListDividerBrush" Color="#EAEAEA" />
-                    <SolidColorBrush x:Key="PrimaryButtonBackgroundBrush" Color="#D6D6D6" />
-                    <SolidColorBrush x:Key="PrimaryButtonHoverBackgroundBrush" Color="#C3C3C3" />
-                    <SolidColorBrush x:Key="PrimaryButtonPressedBackgroundBrush" Color="#B0B0B0" />
-                    <SolidColorBrush x:Key="PrimaryButtonForegroundBrush" Color="#1F2328" />
+                    <Color x:Key="SecondaryCardBackgroundColor">#F0F1F5</Color>
+                    <Color x:Key="SettingsNavigationBackgroundColor">#F2F3F7</Color>
+                    <SolidColorBrush x:Key="SettingsNavigationBorderBrush" Color="#E8EAF0" />
+                    <SolidColorBrush x:Key="SettingsListDividerBrush" Color="#E3E6ED" />
+                    <SolidColorBrush x:Key="PrimaryButtonForegroundBrush" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="DefaultButtonBackgroundBrush" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="DefaultButtonForegroundBrush" Color="#171A24" />
+                    <SolidColorBrush x:Key="DefaultButtonBorderBrush" Color="#E3E6ED" />
+                    <SolidColorBrush x:Key="DefaultButtonHoverBackgroundBrush" Color="#F5F7FA" />
+                    <SolidColorBrush x:Key="DefaultButtonHoverBorderBrush" Color="#C0C4CC" />
+                    <SolidColorBrush x:Key="DefaultButtonPressedBackgroundBrush" Color="#E9ECF2" />
+                    <SolidColorBrush x:Key="DefaultButtonPressedBorderBrush" Color="#A6ABB5" />
+                    <SolidColorBrush x:Key="WarningButtonBackgroundBrush" Color="#D99529" />
+                    <SolidColorBrush x:Key="WarningButtonForegroundBrush" Color="#241A0D" />
+                    <SolidColorBrush x:Key="WarningButtonHoverBackgroundBrush" Color="#C68624" />
+                    <SolidColorBrush x:Key="WarningButtonPressedBackgroundBrush" Color="#AD741E" />
+                    <SolidColorBrush x:Key="DangerButtonBackgroundBrush" Color="#DC5260" />
+                    <SolidColorBrush x:Key="DangerButtonForegroundBrush" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="DangerButtonHoverBackgroundBrush" Color="#C64451" />
+                    <SolidColorBrush x:Key="DangerButtonPressedBackgroundBrush" Color="#B63A47" />
                     <Color x:Key="CodeInlineColor">#CF222E</Color>
-                    <Color x:Key="QuoteBorderColor">#D7D7D7</Color>
+                    <Color x:Key="QuoteBorderColor">#E3E6ED</Color>
                     <x:Double x:Key="FontSizeS">12</x:Double>
                     <x:Double x:Key="FontSizeM">14</x:Double>
                     <x:Double x:Key="FontSizeL">15</x:Double>
@@ -293,22 +474,53 @@
                     <x:Double x:Key="FontSize3Xl">20</x:Double>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
-                    <SolidColorBrush x:Key="ControlBorderBrush" Color="#404040" />
-                    <SolidColorBrush x:Key="InputControlBorderBrush" Color="#505050" />
-                    <Color x:Key="ForegroundColor">#F0F6FC</Color>
-                    <Color x:Key="ThinkingHeaderForegroundColor">#A5ADBA</Color>
-                    <Color x:Key="ThinkingContentForegroundColor">#8B949E</Color>
-                    <Color x:Key="BorderColor">#444444</Color>
-                    <Color x:Key="CardBackgroundColor">#000000</Color>
-                    <Color x:Key="SecondaryCardBackgroundColor">#111111</Color>
-                    <Color x:Key="SettingsNavigationBackgroundColor">#252525</Color>
-                    <SolidColorBrush x:Key="SettingsListDividerBrush" Color="#323232" />
-                    <SolidColorBrush x:Key="PrimaryButtonBackgroundBrush" Color="#575757" />
-                    <SolidColorBrush x:Key="PrimaryButtonHoverBackgroundBrush" Color="#696969" />
-                    <SolidColorBrush x:Key="PrimaryButtonPressedBackgroundBrush" Color="#797979" />
-                    <SolidColorBrush x:Key="PrimaryButtonForegroundBrush" Color="#F0F6FC" />
+                    <SolidColorBrush x:Key="AppBackgroundBrush" Color="#101115" />
+                    <SolidColorBrush x:Key="SurfaceBackgroundBrush" Color="#1A1B22" />
+                    <SolidColorBrush x:Key="ComboBoxBackgroundBrush" Color="#202129" />
+                    <SolidColorBrush x:Key="PopupBackgroundBrush" Color="#202129" />
+                    <SolidColorBrush x:Key="ComboBoxDropDownBackground" Color="#202129" />
+                    <SolidColorBrush x:Key="ComboBoxDropDownBorderBrush" Color="#30323C" />
+                    <SolidColorBrush x:Key="ComboBoxDropDownForeground" Color="#F2F3F7" />
+                    <Thickness x:Key="ComboBoxDropdownBorderThickness">1</Thickness>
+                    <SolidColorBrush x:Key="MenuFlyoutPresenterBackground" Color="#202129" />
+                    <SolidColorBrush x:Key="MenuFlyoutPresenterBorderBrush" Color="#30323C" />
+                    <Thickness x:Key="MenuFlyoutPresenterBorderThemeThickness">1</Thickness>
+                    <SolidColorBrush x:Key="FlyoutPresenterBackground" Color="#202129" />
+                    <SolidColorBrush x:Key="FlyoutBorderThemeBrush" Color="#30323C" />
+                    <Thickness x:Key="FlyoutBorderThemeThickness">1</Thickness>
+                    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#F2F3F7" />
+                    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#A4A9B9" />
+                    <SolidColorBrush x:Key="TextMutedBrush" Color="#747B8D" />
+                    <SolidColorBrush x:Key="ErrorBrush" Color="#F07885" />
+                    <SolidColorBrush x:Key="ControlBorderBrush" Color="#30323C" />
+                    <SolidColorBrush x:Key="InputControlBorderBrush" Color="#30323C" />
+                    <Color x:Key="ForegroundColor">#F2F3F7</Color>
+                    <Color x:Key="ThinkingHeaderForegroundColor">#A4A9B9</Color>
+                    <Color x:Key="ThinkingContentForegroundColor">#A4A9B9</Color>
+                    <Color x:Key="BorderColor">#30323C</Color>
+                    <Color x:Key="CardBackgroundColor">#1A1B22</Color>
+                    <Color x:Key="SecondaryCardBackgroundColor">#15161C</Color>
+                    <Color x:Key="SettingsNavigationBackgroundColor">#15161C</Color>
+                    <SolidColorBrush x:Key="SettingsNavigationBorderBrush" Color="#242630" />
+                    <SolidColorBrush x:Key="SettingsListDividerBrush" Color="#30323C" />
+                    <SolidColorBrush x:Key="PrimaryButtonForegroundBrush" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="DefaultButtonBackgroundBrush" Color="#1A1B22" />
+                    <SolidColorBrush x:Key="DefaultButtonForegroundBrush" Color="#F2F3F7" />
+                    <SolidColorBrush x:Key="DefaultButtonBorderBrush" Color="#45474F" />
+                    <SolidColorBrush x:Key="DefaultButtonHoverBackgroundBrush" Color="#252731" />
+                    <SolidColorBrush x:Key="DefaultButtonHoverBorderBrush" Color="#5C5E66" />
+                    <SolidColorBrush x:Key="DefaultButtonPressedBackgroundBrush" Color="#30323C" />
+                    <SolidColorBrush x:Key="DefaultButtonPressedBorderBrush" Color="#6D7078" />
+                    <SolidColorBrush x:Key="WarningButtonBackgroundBrush" Color="#F1B75B" />
+                    <SolidColorBrush x:Key="WarningButtonForegroundBrush" Color="#2A2114" />
+                    <SolidColorBrush x:Key="WarningButtonHoverBackgroundBrush" Color="#F5C675" />
+                    <SolidColorBrush x:Key="WarningButtonPressedBackgroundBrush" Color="#DDA646" />
+                    <SolidColorBrush x:Key="DangerButtonBackgroundBrush" Color="#F07885" />
+                    <SolidColorBrush x:Key="DangerButtonForegroundBrush" Color="#30171A" />
+                    <SolidColorBrush x:Key="DangerButtonHoverBackgroundBrush" Color="#F48A95" />
+                    <SolidColorBrush x:Key="DangerButtonPressedBackgroundBrush" Color="#D86270" />
                     <Color x:Key="CodeInlineColor">#FF7B72</Color>
-                    <Color x:Key="QuoteBorderColor">#444444</Color>
+                    <Color x:Key="QuoteBorderColor">#30323C</Color>
                     <x:Double x:Key="FontSizeS">12</x:Double>
                     <x:Double x:Key="FontSizeM">14</x:Double>
                     <x:Double x:Key="FontSizeL">15</x:Double>

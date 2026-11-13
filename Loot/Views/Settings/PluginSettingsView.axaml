@@ -5,30 +5,30 @@
              x:DataType="vm:PluginSettingsViewModel">
   <Grid RowDefinitions="Auto,Auto,*" RowSpacing="12">
     <Grid ColumnDefinitions="*,Auto">
-      <TextBlock Text="插件" FontSize="22" FontWeight="SemiBold" />
+      <TextBlock Text="插件" FontSize="18" FontWeight="SemiBold" />
       <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
         <Button Content="安装文件夹" Click="OnInstallClick" />
         <Button Content="安装 .lootplugin" Click="OnInstallArchiveClick" />
         <Button Content="刷新" Command="{Binding RefreshCommand}" />
       </StackPanel>
     </Grid>
-    <TextBlock Grid.Row="1" Text="{Binding StatusMessage}" Foreground="IndianRed" TextWrapping="Wrap" />
+    <TextBlock Grid.Row="1" Text="{Binding StatusMessage}" Foreground="{DynamicResource ErrorBrush}" TextWrapping="Wrap" />
     <ScrollViewer Grid.Row="2">
       <ItemsControl ItemsSource="{Binding Plugins}">
         <ItemsControl.ItemTemplate>
           <DataTemplate x:DataType="vm:PluginItemViewModel">
-            <Border BorderThickness="1" BorderBrush="Gray" CornerRadius="8" Padding="12" Margin="0,0,0,10">
+            <Border Classes="card" Padding="12" Margin="0,0,0,10">
               <StackPanel Spacing="8">
                 <Grid ColumnDefinitions="*,Auto">
                   <StackPanel>
-                    <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="SemiBold" />
+                    <TextBlock Text="{Binding Name}" FontSize="15" FontWeight="SemiBold" />
                     <TextBlock Text="{Binding Id}" Opacity="0.7" />
                     <TextBlock Text="{Binding Description}" TextWrapping="Wrap" />
                   </StackPanel>
                   <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                     <TextBlock Text="{Binding Version}" VerticalAlignment="Center" />
                     <CheckBox IsChecked="{Binding IsEnabled}" IsEnabled="{Binding CanToggle}" Content="启用" />
-                    <Button Content="移除" Command="{Binding RemoveCommand}" IsEnabled="{Binding CanRemove}" />
+                    <Button Classes="danger" Content="移除" Command="{Binding RemoveCommand}" IsEnabled="{Binding CanRemove}" />
                   </StackPanel>
                 </Grid>
                 <ItemsControl ItemsSource="{Binding Tools}">

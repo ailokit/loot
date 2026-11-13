@@ -42,7 +42,7 @@ public sealed partial class GeneralSettingsViewModel : SettingsViewModelBase
     public IReadOnlyList<AccentColorOption> AccentColorOptions { get; } =
     [
         new("lagoon", "Lagoon", "#0EA5E9"),
-        new("cobalt", "Cobalt", "#2563EB"),
+        new("cobalt", "Cobalt", "#4F6BF5"),
         new("periwinkle", "Periwinkle", "#6366F1"),
         new("iris", "Iris", "#8B5CF6"),
         new("fuchsia", "Fuchsia", "#C026D3"),

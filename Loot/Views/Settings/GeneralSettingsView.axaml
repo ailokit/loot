@@ -10,7 +10,7 @@
     </UserControl.Styles>
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
     <StackPanel Spacing="16" Margin="0,0,8,0">
-        <TextBlock Text="{Binding Localization[GeneralSettings]}" FontSize="22" FontWeight="Bold"/>
+        <TextBlock Text="{Binding Localization[GeneralSettings]}" FontSize="18" FontWeight="Bold"/>
         <Border Classes="card" Padding="14">
             <DockPanel>
                 <ComboBox DockPanel.Dock="Right" ItemsSource="{Binding ThemeOptions}" SelectedItem="{Binding SelectedTheme}">

@@ -13,7 +13,7 @@
                         <TextBlock Text="{Binding Localization[New]}"/>
                     </StackPanel>
                 </Button>
-                <Button Classes="primary-button"
+                <Button Classes="danger"
                         Command="{Binding DeleteSkillCommand}"
                         CommandParameter="{Binding SelectedSkill}"
                         Padding="10,5">
@@ -29,7 +29,7 @@
                     </StackPanel>
                 </Button>
             </StackPanel>
-            <TextBlock Text="{Binding Localization[SkillManagement]}" FontSize="22" FontWeight="Bold"/>
+            <TextBlock Text="{Binding Localization[SkillManagement]}" FontSize="18" FontWeight="Bold"/>
         </DockPanel>
 
         <Grid Grid.Row="1" ColumnDefinitions="250,*" ColumnSpacing="14">

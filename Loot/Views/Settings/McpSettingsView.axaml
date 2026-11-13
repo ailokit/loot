@@ -14,7 +14,7 @@
                         <TextBlock Text="{Binding Localization[New]}"/>
                     </StackPanel>
                 </Button>
-                <Button Classes="primary-button"
+                <Button Classes="danger"
                         Command="{Binding DeleteMcpServerCommand}"
                         CommandParameter="{Binding SelectedServer}"
                         Padding="10,5">
@@ -30,7 +30,7 @@
                     </StackPanel>
                 </Button>
             </StackPanel>
-            <TextBlock Text="{Binding Localization[McpSettings]}" FontSize="22" FontWeight="Bold"/>
+            <TextBlock Text="{Binding Localization[McpSettings]}" FontSize="18" FontWeight="Bold"/>
         </DockPanel>
 
         <Grid Grid.Row="1" ColumnDefinitions="250,*" ColumnSpacing="14">
@@ -61,7 +61,7 @@
             <Border Grid.Column="1" Classes="card" Padding="14">
                 <ScrollViewer>
                     <StackPanel Spacing="12">
-                        <TextBlock Text="{Binding ServerName}" FontSize="16" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding ServerName}" FontSize="15" FontWeight="SemiBold"/>
                         <TextBlock Text="{Binding Localization[McpSettingsDescription]}" Opacity="0.7" TextWrapping="Wrap"/>
                         <TextBlock Text="{Binding Localization[McpServerName]}" FontWeight="SemiBold"/>
                         <TextBox Text="{Binding ServerName, Mode=TwoWay}"/>

@@ -21,7 +21,7 @@
                     </StackPanel>
                 </Button>
             </StackPanel>
-            <TextBlock Text="{Binding Localization[AgentSkillsTitle]}" FontSize="22" FontWeight="Bold"/>
+            <TextBlock Text="{Binding Localization[AgentSkillsTitle]}" FontSize="18" FontWeight="Bold"/>
         </DockPanel>
 
         <Grid Grid.Row="1" ColumnDefinitions="250,*" ColumnSpacing="14">
@@ -101,7 +101,7 @@
                                             BorderThickness="0"
                                             ToolTip.Tip="{Binding Localization[AgentSkillsUninstall]}"
                                             AutomationProperties.Name="{Binding Localization[AgentSkillsUninstall]}">
-                                        <materialIcons:MaterialIcon Kind="Delete" Width="16" Height="16" Foreground="#C62828"/>
+                                        <materialIcons:MaterialIcon Kind="Delete" Width="16" Height="16" Foreground="{DynamicResource ErrorBrush}"/>
                                     </Button>
                                     <TextBlock Text="{Binding SelectedSkill.EnabledText}" VerticalAlignment="Center"/>
                                     <ToggleSwitch IsChecked="{Binding SelectedSkill.IsEnabled, Mode=TwoWay}" OnContent="{x:Null}" OffContent="{x:Null}"/>
@@ -230,10 +230,10 @@
                                 <materialIcons:MaterialIcon Kind="ErrorOutline"
                                                              Width="24"
                                                              Height="24"
-                                                             Foreground="#C62828"
+                                                             Foreground="{DynamicResource ErrorBrush}"
                                                              HorizontalAlignment="Center"/>
                                 <TextBlock Text="{Binding ScanStatusMessage}"
-                                           Foreground="#C62828"
+                                           Foreground="{DynamicResource ErrorBrush}"
                                            MaxWidth="460"
                                            TextWrapping="Wrap"
                                            TextAlignment="Center"/>

@@ -8,7 +8,7 @@
     <Grid RowDefinitions="Auto,*,Auto" RowSpacing="12">
         <DockPanel LastChildFill="True">
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="8">
-                <Button Classes="primary-button" Command="{Binding DeleteHistoryConversationCommand}" Padding="10,5">
+                <Button Classes="danger" Command="{Binding DeleteHistoryConversationCommand}" Padding="10,5">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <TextBlock Text="{Binding Localization[Delete]}"/>
                     </StackPanel>
@@ -19,7 +19,7 @@
                     </StackPanel>
                 </Button>
             </StackPanel>
-            <TextBlock Text="{Binding Localization[History]}" FontSize="22" FontWeight="Bold"/>
+            <TextBlock Text="{Binding Localization[History]}" FontSize="18" FontWeight="Bold"/>
         </DockPanel>
 
         <Grid Grid.Row="1" ColumnDefinitions="250,*" ColumnSpacing="14">

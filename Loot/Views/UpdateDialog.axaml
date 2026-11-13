@@ -15,7 +15,7 @@
         <TextBlock x:Name="ReleaseText" TextWrapping="Wrap"
                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
-            <Button x:Name="LaterButton" Click="OnLaterClick" Padding="12,7"/>
+            <Button x:Name="LaterButton" Classes="default" Click="OnLaterClick" Padding="12,7"/>
             <Button x:Name="UpdateButton" Classes="primary-button" Click="OnUpdateClick" Padding="12,7"/>
         </StackPanel>
     </StackPanel>
