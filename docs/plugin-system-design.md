@@ -137,7 +137,7 @@ public interface IJavaScriptRuntime : IAsyncDisposable
 
 `runtime.entry` 可省略；建议每个 tool 独立入口，插件级公用 JS 可通过 Host 定义的本地模块加载器共享。首期为缩小 QuickJS ES module 解析范围，优先采用单一入口脚本 + Host 注入 `loot` 全局，不支持动态 `import()`、Node.js、CommonJS、npm 包或从网络加载模块。若工具脚本独立，manifest 的 `runtime.entry` 可以由 tool 定义覆盖。
 
-校验规则：只读 UTF-8 JSON，拒绝重复键、未知 manifest 主版本、缺少必填字段、无效语义版本、超出当前 Loot/API 兼容区间、越出插件根目录的路径、超限文件、无效工具 ID 和重复工具 ID。路径处理必须 canonicalize 并确认最终路径仍在插件根目录下；拒绝符号链接作为入口/资源路径。未知扩展字段应忽略或保留，便于前向扩展。
+校验规则：只读 UTF-8 JSON，拒绝重复键、未知 manifest 主版本、缺少必填字段、无效语义版本、超出当前 src/Loot/API 兼容区间、越出插件根目录的路径、超限文件、无效工具 ID 和重复工具 ID。路径处理必须 canonicalize 并确认最终路径仍在插件根目录下；拒绝符号链接作为入口/资源路径。未知扩展字段应忽略或保留，便于前向扩展。
 
 ## 6. 小工具 UI 规范与 Avalonia 渲染
 
@@ -314,5 +314,5 @@ UI 可先构建再调用 `onOpen`，避免脚本报错时空白窗口；初始�
 - 已实现插件根目录、JSON manifest 扫描、启用状态文件、目录安装和 `.lootplugin`/ZIP 安装、包路径校验、符号链接拒绝、50 MiB 解压限制、卸载确认以及插件私有数据目录保留。
 - `Loot.JsonRender.Avalonia` 是独立项目；组件和状态表达式的当前支持范围见 §6.1。`root`/`elements`、树深度、循环引用、渲染控件数和文件大小会被限制。
 - JS 使用 `globalThis.plugin.onOpen` / `onAction`；本机 QuickJS-NG C shim 提供每实例 32 MiB heap、1 MiB stack 和每次调用约 2 秒 CPU 时间限制。`loot.ui.setState` 与 `notify` 已接通。
-- 原生 shim 使用 QuickJS-NG `v0.18.0` 源码。macOS/Linux Debug 构建会用本机 C 编译器自动构建并复制到应用输出目录；Windows 和发布构建使用 `native/quickjs/CMakeLists.txt`。发布工作流设置 `BuildQuickJsNative=true` 并将库放入制品目录。
+- 原生 shim 使用 QuickJS-NG `v0.18.0` 源码。macOS/Linux Debug 构建会用本机 C 编译器自动构建并复制到应用输出目录；Windows 和发布构建使用 `src/native/quickjs/CMakeLists.txt`。发布工作流设置 `BuildQuickJsNative=true` 并将库放入制品目录。
 - 暂未实现 storage API、网络/剪贴板等宿主能力和 capability 授权界面；因此当前 manifest 声明任何 capability 都会被拒绝。暂未实现图片组件、模块导入、工具数据迁移、在线市场及跨进程隔离。

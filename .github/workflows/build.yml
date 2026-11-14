@@ -21,9 +21,9 @@ jobs:
       - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 11.0.x
-      - run: dotnet restore Loot.slnx
-      - run: dotnet build Loot.slnx --configuration Release --no-restore
-      - run: dotnet test Loot.slnx --configuration Release --no-build --logger "trx;LogFileName=test-results.trx"
+      - run: dotnet restore src/Loot.slnx
+      - run: dotnet build src/Loot.slnx --configuration Release --no-restore
+      - run: dotnet test src/Loot.slnx --configuration Release --no-build --logger "trx;LogFileName=test-results.trx"
       - uses: actions/upload-artifact@v6
         if: always()
         with:
@@ -47,7 +47,7 @@ jobs:
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
         run: |
           set -euo pipefail
-          version_file="Loot/Loot.csproj"
+          version_file="src/Loot/Loot.csproj"
           tag_version="${GITHUB_REF_NAME#v}"
 
           if [[ ! "$tag_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
@@ -112,8 +112,8 @@ jobs:
       - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 11.0.x
-      - run: dotnet restore Loot/Loot.csproj --runtime ${{ matrix.rid }} --property:Configuration=Release -p:SelfContained=true -p:PublishAot=true -p:PublishTrimmed=true
-      - run: dotnet publish Loot/Loot.csproj --configuration Release --runtime ${{ matrix.rid }} --self-contained true --no-restore --output artifacts/${{ matrix.rid }}/publish -p:BuildQuickJsNative=true -p:Version=${{ steps.version.outputs.version }} -p:PublishAot=true -p:PublishTrimmed=true -p:DebugSymbols=false -p:DebugType=None -p:StripSymbols=true
+      - run: dotnet restore src/Loot/Loot.csproj --runtime ${{ matrix.rid }} --property:Configuration=Release -p:SelfContained=true -p:PublishAot=true -p:PublishTrimmed=true
+      - run: dotnet publish src/Loot/Loot.csproj --configuration Release --runtime ${{ matrix.rid }} --self-contained true --no-restore --output artifacts/${{ matrix.rid }}/publish -p:BuildQuickJsNative=true -p:Version=${{ steps.version.outputs.version }} -p:PublishAot=true -p:PublishTrimmed=true -p:DebugSymbols=false -p:DebugType=None -p:StripSymbols=true
       - name: Create macOS application bundle
         if: startsWith(matrix.rid, 'osx-')
         shell: bash
@@ -131,7 +131,7 @@ jobs:
             mv "$bundle_data" "$app_dir/Contents/Resources/"
           done < <(find "$app_dir/Contents/MacOS" -maxdepth 1 -type f \
             \( -name '*.md' -o -name '*.txt' \) -print0)
-          cp "$GITHUB_WORKSPACE/Loot/Assets/Loot.icns" "$app_dir/Contents/Resources/Loot.icns"
+          cp "$GITHUB_WORKSPACE/src/Loot/Assets/Loot.icns" "$app_dir/Contents/Resources/Loot.icns"
           cat > "$app_dir/Contents/Info.plist" <<EOF
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -302,8 +302,8 @@ jobs:
           $artifactDir = Join-Path $env:GITHUB_WORKSPACE "artifacts\${{ matrix.rid }}"
           $portableZip = Join-Path $env:GITHUB_WORKSPACE "artifacts\loot-${{ matrix.rid }}-${{ steps.version.outputs.tag }}.zip"
           $appExecutable = Join-Path $publishDir "Loot.exe"
-          $issPath = Join-Path $env:GITHUB_WORKSPACE "Loot\Installer\Loot.iss"
-          $setupIcon = Join-Path $env:GITHUB_WORKSPACE "Loot\Assets\loot.ico"
+          $issPath = Join-Path $env:GITHUB_WORKSPACE "src\Loot\Installer\Loot.iss"
+          $setupIcon = Join-Path $env:GITHUB_WORKSPACE "src\Loot\Assets\loot.ico"
 
           if (-not (Test-Path $appExecutable)) {
             Get-ChildItem -Path $publishDir -Force | Format-Table Name, Length, Mode

@@ -8,7 +8,7 @@
       "name": "C#: Loot Debug",
       "type": "dotnet",
       "request": "launch",
-      "projectPath": "${workspaceFolder}/Loot/Loot.csproj"
+      "projectPath": "${workspaceFolder}/src/Loot/Loot.csproj"
     }
 
 

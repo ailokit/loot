@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Themes.Fluent;
 using Avalonia.Styling;
@@ -107,7 +108,35 @@ public sealed class AppSettingsService(AppSettingRepository repository)
 
         fluentTheme.Palettes[ThemeVariant.Light].Accent = color;
         fluentTheme.Palettes[ThemeVariant.Dark].Accent = color;
+
+        // Keep primary button hover tied to the selected accent in both themes.
+        // Blending toward white makes the hover state visibly lighter while retaining
+        // the hue chosen by the user.
+        foreach (var (variant, provider) in Application.Current.Resources.ThemeDictionaries)
+        {
+            if (provider is not ResourceDictionary dictionary)
+            {
+                continue;
+            }
+
+            if (Equals(variant, ThemeVariant.Light))
+            {
+                dictionary["PrimaryButtonHoverBackgroundBrush"] = new SolidColorBrush(Lighten(color, 0.18));
+            }
+            else if (Equals(variant, ThemeVariant.Dark))
+            {
+                dictionary["PrimaryButtonHoverBackgroundBrush"] = new SolidColorBrush(Lighten(color, 0.28));
+            }
+        }
     }
+
+    private static Color Lighten(Color color, double amount) => Color.FromRgb(
+        BlendChannel(color.R, amount),
+        BlendChannel(color.G, amount),
+        BlendChannel(color.B, amount));
+
+    private static byte BlendChannel(byte value, double amount) =>
+        (byte)Math.Clamp((int)Math.Round(value + (byte.MaxValue - value) * amount), 0, byte.MaxValue);
 
     public static bool TryParseColor(string? value, out Color color)
     {

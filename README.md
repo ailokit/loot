@@ -23,8 +23,8 @@ Loot is a native desktop AI workspace built with .NET 11 and Avalonia. It brings
 - Provider credentials or a locally running Ollama instance.
 
 ```bash
-dotnet restore Loot.slnx
-dotnet run --project Loot/Loot.csproj
+dotnet restore src/Loot.slnx
+dotnet run --project src/Loot/Loot.csproj
 ```
 
 After launching Loot, add a model provider in Settings, then select a model and skill. To work with local files, select files or folders as the chat workspace before sending a request.
@@ -48,14 +48,14 @@ Scheduled agents are intended for recurring reports, checks, and project mainten
 ## Build and test
 
 ```bash
-dotnet build Loot.slnx
-dotnet test Loot.slnx --no-build
+dotnet build src/Loot.slnx
+dotnet test src/Loot.slnx --no-build
 ```
 
 Release build:
 
 ```bash
-dotnet build Loot.slnx --configuration Release
+dotnet build src/Loot.slnx --configuration Release
 ```
 
 Supported release targets:

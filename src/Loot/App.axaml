@@ -48,11 +48,31 @@
         </FluentTheme>
         <materialIcons:MaterialIconStyles />
         <StyleInclude Source="avares://LiveMarkdown.Avalonia/Styles.axaml" />
+        <!-- Markdown follows the same foreground, surface, border, and accent tokens as the rest of the UI. -->
+        <Style Selector="markdown|MarkdownRenderer">
+            <Setter Property="TextElement.Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+            <Setter Property="TextElement.FontSize" Value="{DynamicResource FontSizeM}" />
+        </Style>
+        <Style Selector="markdown|MarkdownTextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+            <Setter Property="FontSize" Value="{DynamicResource FontSizeM}" />
+        </Style>
+        <Style Selector="markdown|CodeInline">
+            <Setter Property="Background" Value="{DynamicResource MarkdownInlineCodeBackgroundBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource MarkdownInlineCodeForegroundBrush}" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="Padding" Value="3,1" />
+            <Setter Property="Margin" Value="1,0" />
+        </Style>
         <Style Selector="markdown|CodeBlock">
             <Setter Property="ColorTheme" Value="VisualStudioLight" />
+            <Setter Property="Margin" Value="0,8" />
         </Style>
         <Style Selector="markdown|CodeBlock:dark">
             <Setter Property="ColorTheme" Value="VisualStudioDark" />
+        </Style>
+        <Style Selector="markdown|Link">
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlHighlightAltAccentBrush}" />
         </Style>
         <!-- Loot UI tokens: compact desktop controls with matching light and dark palettes. -->
         <Style Selector="Window">
@@ -63,15 +83,12 @@
             <Setter Property="FontSize" Value="13" />
             <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
         </Style>
-        <Style Selector=":is(Control):disabled">
+        <Style Selector="TextBox:disabled, ComboBox:disabled, CheckBox:disabled, RadioButton:disabled, ToggleSwitch:disabled, Slider:disabled, ListBoxItem:disabled, MenuItem:disabled">
             <Setter Property="Opacity" Value="0.56" />
         </Style>
         <Style Selector=":is(Button):focus">
             <Setter Property="BorderBrush" Value="{DynamicResource SystemControlHighlightAltAccentBrush}" />
             <Setter Property="BorderThickness" Value="2" />
-        </Style>
-        <Style Selector=":is(Button):pressed">
-            <Setter Property="Opacity" Value="0.9" />
         </Style>
         <!-- Shared compact control language layered on top of Fluent. -->
         <Style Selector=":is(Button)">
@@ -90,9 +107,17 @@
             <Setter Property="Background" Value="{DynamicResource DefaultButtonHoverBackgroundBrush}" />
             <Setter Property="BorderBrush" Value="{DynamicResource DefaultButtonHoverBorderBrush}" />
         </Style>
+        <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource DefaultButtonHoverBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource DefaultButtonHoverBorderBrush}" />
+        </Style>
         <Style Selector=":is(Button):pressed">
-            <Setter Property="Background" Value="{DynamicResource DefaultButtonPressedBackgroundBrush}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource DefaultButtonPressedBorderBrush}" />
+            <Setter Property="Background" Value="{DynamicResource DefaultButtonBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource DefaultButtonBorderBrush}" />
+        </Style>
+        <Style Selector="Button:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource DefaultButtonBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource DefaultButtonBorderBrush}" />
         </Style>
         <Style Selector=":is(Button).default, :is(Button).default-button">
             <Setter Property="Background" Value="{DynamicResource DefaultButtonBackgroundBrush}" />
@@ -105,8 +130,24 @@
             <Setter Property="BorderBrush" Value="{DynamicResource DefaultButtonHoverBorderBrush}" />
         </Style>
         <Style Selector=":is(Button).default:pressed, :is(Button).default-button:pressed">
-            <Setter Property="Background" Value="{DynamicResource DefaultButtonPressedBackgroundBrush}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource DefaultButtonPressedBorderBrush}" />
+            <Setter Property="Background" Value="{DynamicResource DefaultButtonBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource DefaultButtonBorderBrush}" />
+        </Style>
+        <Style Selector="Button.default:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource DefaultButtonHoverBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource DefaultButtonHoverBorderBrush}" />
+        </Style>
+        <Style Selector="Button.default-button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource DefaultButtonHoverBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource DefaultButtonHoverBorderBrush}" />
+        </Style>
+        <Style Selector="Button.default:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource DefaultButtonBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource DefaultButtonBorderBrush}" />
+        </Style>
+        <Style Selector="Button.default-button:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource DefaultButtonBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource DefaultButtonBorderBrush}" />
         </Style>
         <Style Selector=":is(Button) /template/ ContentPresenter">
             <Setter Property="CornerRadius" Value="{DynamicResource CornerRadiusButton}" />
@@ -128,27 +169,71 @@
             <Setter Property="BorderBrush" Value="{DynamicResource SystemControlHighlightAltAccentBrush}" />
             <Setter Property="BorderThickness" Value="1" />
         </Style>
+        <Style Selector=":is(Button).primary TextBlock, :is(Button).primary-button TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryButtonForegroundBrush}" />
+        </Style>
+        <Style Selector=":is(Button).primary materialIcons|MaterialIcon, :is(Button).primary-button materialIcons|MaterialIcon">
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryButtonForegroundBrush}" />
+        </Style>
         <Style Selector=":is(Button).primary /template/ ContentPresenter, :is(Button).primary-button /template/ ContentPresenter">
             <Setter Property="CornerRadius" Value="{DynamicResource CornerRadiusControl}" />
         </Style>
         <Style Selector=":is(Button).primary:pointerover, :is(Button).primary-button:pointerover">
-            <Setter Property="Opacity" Value="0.92" />
+            <Setter Property="Opacity" Value="1" />
         </Style>
         <Style Selector=":is(Button).primary:pressed, :is(Button).primary-button:pressed">
-            <Setter Property="Opacity" Value="0.84" />
+            <Setter Property="Opacity" Value="1" />
+        </Style>
+        <Style Selector="Button.primary:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource PrimaryButtonHoverBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryButtonHoverBackgroundBrush}" />
+        </Style>
+        <Style Selector="Button.primary-button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource PrimaryButtonHoverBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryButtonHoverBackgroundBrush}" />
+        </Style>
+        <Style Selector="Button.primary:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource SystemControlHighlightAltAccentBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlHighlightAltAccentBrush}" />
+        </Style>
+        <Style Selector="Button.primary-button:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource SystemControlHighlightAltAccentBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlHighlightAltAccentBrush}" />
         </Style>
         <Style Selector=":is(Button).warning, :is(Button).warning-button">
             <Setter Property="Background" Value="{DynamicResource WarningButtonBackgroundBrush}" />
             <Setter Property="Foreground" Value="{DynamicResource WarningButtonForegroundBrush}" />
             <Setter Property="BorderBrush" Value="{DynamicResource WarningButtonBackgroundBrush}" />
         </Style>
+        <Style Selector=":is(Button).warning TextBlock, :is(Button).warning-button TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource WarningButtonForegroundBrush}" />
+        </Style>
+        <Style Selector=":is(Button).warning materialIcons|MaterialIcon, :is(Button).warning-button materialIcons|MaterialIcon">
+            <Setter Property="Foreground" Value="{DynamicResource WarningButtonForegroundBrush}" />
+        </Style>
         <Style Selector=":is(Button).warning:pointerover, :is(Button).warning-button:pointerover">
             <Setter Property="Background" Value="{DynamicResource WarningButtonHoverBackgroundBrush}" />
             <Setter Property="BorderBrush" Value="{DynamicResource WarningButtonHoverBackgroundBrush}" />
         </Style>
+        <Style Selector="Button.warning:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource WarningButtonHoverBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource WarningButtonHoverBackgroundBrush}" />
+        </Style>
+        <Style Selector="Button.warning-button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource WarningButtonHoverBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource WarningButtonHoverBackgroundBrush}" />
+        </Style>
         <Style Selector=":is(Button).warning:pressed, :is(Button).warning-button:pressed">
-            <Setter Property="Background" Value="{DynamicResource WarningButtonPressedBackgroundBrush}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource WarningButtonPressedBackgroundBrush}" />
+            <Setter Property="Background" Value="{DynamicResource WarningButtonBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource WarningButtonBackgroundBrush}" />
+        </Style>
+        <Style Selector="Button.warning:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource WarningButtonBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource WarningButtonBackgroundBrush}" />
+        </Style>
+        <Style Selector="Button.warning-button:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource WarningButtonBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource WarningButtonBackgroundBrush}" />
         </Style>
         <Style Selector=":is(Button).warning:focus, :is(Button).warning-button:focus">
             <Setter Property="BorderBrush" Value="{DynamicResource WarningButtonHoverBackgroundBrush}" />
@@ -158,16 +243,154 @@
             <Setter Property="Foreground" Value="{DynamicResource DangerButtonForegroundBrush}" />
             <Setter Property="BorderBrush" Value="{DynamicResource DangerButtonBackgroundBrush}" />
         </Style>
+        <Style Selector=":is(Button).danger TextBlock, :is(Button).danger-button TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource DangerButtonForegroundBrush}" />
+        </Style>
+        <Style Selector=":is(Button).danger materialIcons|MaterialIcon, :is(Button).danger-button materialIcons|MaterialIcon">
+            <Setter Property="Foreground" Value="{DynamicResource DangerButtonForegroundBrush}" />
+        </Style>
         <Style Selector=":is(Button).danger:pointerover, :is(Button).danger-button:pointerover">
             <Setter Property="Background" Value="{DynamicResource DangerButtonHoverBackgroundBrush}" />
             <Setter Property="BorderBrush" Value="{DynamicResource DangerButtonHoverBackgroundBrush}" />
         </Style>
+        <Style Selector="Button.danger:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource DangerButtonHoverBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource DangerButtonHoverBackgroundBrush}" />
+        </Style>
+        <Style Selector="Button.danger-button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource DangerButtonHoverBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource DangerButtonHoverBackgroundBrush}" />
+        </Style>
         <Style Selector=":is(Button).danger:pressed, :is(Button).danger-button:pressed">
-            <Setter Property="Background" Value="{DynamicResource DangerButtonPressedBackgroundBrush}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource DangerButtonPressedBackgroundBrush}" />
+            <Setter Property="Background" Value="{DynamicResource DangerButtonBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource DangerButtonBackgroundBrush}" />
+        </Style>
+        <Style Selector="Button.danger:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource DangerButtonBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource DangerButtonBackgroundBrush}" />
+        </Style>
+        <Style Selector="Button.danger-button:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource DangerButtonBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource DangerButtonBackgroundBrush}" />
         </Style>
         <Style Selector=":is(Button).danger:focus, :is(Button).danger-button:focus">
             <Setter Property="BorderBrush" Value="{DynamicResource DangerButtonHoverBackgroundBrush}" />
+        </Style>
+        <!-- Disabled buttons keep a solid, visibly separate surface instead of relying on opacity. -->
+        <Style Selector=":is(Button):disabled">
+            <Setter Property="Opacity" Value="1" />
+            <Setter Property="Background" Value="{DynamicResource DefaultButtonDisabledBackgroundBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource DefaultButtonDisabledForegroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource DefaultButtonDisabledBorderBrush}" />
+        </Style>
+        <Style Selector="Button:disabled /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource DefaultButtonDisabledBackgroundBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource DefaultButtonDisabledForegroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource DefaultButtonDisabledBorderBrush}" />
+        </Style>
+        <Style Selector="Button:disabled TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource DefaultButtonDisabledForegroundBrush}" />
+            <Setter Property="Opacity" Value="1" />
+        </Style>
+        <Style Selector="Button:disabled materialIcons|MaterialIcon">
+            <Setter Property="Foreground" Value="{DynamicResource DefaultButtonDisabledForegroundBrush}" />
+            <Setter Property="Opacity" Value="1" />
+        </Style>
+        <Style Selector=":is(Button).primary:disabled, :is(Button).primary-button:disabled">
+            <Setter Property="Background" Value="{DynamicResource PrimaryButtonDisabledBackgroundBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryButtonDisabledForegroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryButtonDisabledBorderBrush}" />
+        </Style>
+        <Style Selector="Button.primary:disabled /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource PrimaryButtonDisabledBackgroundBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryButtonDisabledForegroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryButtonDisabledBorderBrush}" />
+        </Style>
+        <Style Selector="Button.primary-button:disabled /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource PrimaryButtonDisabledBackgroundBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryButtonDisabledForegroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryButtonDisabledBorderBrush}" />
+        </Style>
+        <Style Selector="Button.primary:disabled TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryButtonDisabledForegroundBrush}" />
+            <Setter Property="Opacity" Value="1" />
+        </Style>
+        <Style Selector="Button.primary-button:disabled TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryButtonDisabledForegroundBrush}" />
+            <Setter Property="Opacity" Value="1" />
+        </Style>
+        <Style Selector="Button.primary:disabled materialIcons|MaterialIcon">
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryButtonDisabledForegroundBrush}" />
+            <Setter Property="Opacity" Value="1" />
+        </Style>
+        <Style Selector="Button.primary-button:disabled materialIcons|MaterialIcon">
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryButtonDisabledForegroundBrush}" />
+            <Setter Property="Opacity" Value="1" />
+        </Style>
+        <Style Selector=":is(Button).warning:disabled, :is(Button).warning-button:disabled">
+            <Setter Property="Background" Value="{DynamicResource WarningButtonDisabledBackgroundBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource WarningButtonDisabledForegroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource WarningButtonDisabledBorderBrush}" />
+        </Style>
+        <Style Selector="Button.warning:disabled /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource WarningButtonDisabledBackgroundBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource WarningButtonDisabledForegroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource WarningButtonDisabledBorderBrush}" />
+        </Style>
+        <Style Selector="Button.warning-button:disabled /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource WarningButtonDisabledBackgroundBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource WarningButtonDisabledForegroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource WarningButtonDisabledBorderBrush}" />
+        </Style>
+        <Style Selector="Button.warning:disabled TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource WarningButtonDisabledForegroundBrush}" />
+            <Setter Property="Opacity" Value="1" />
+        </Style>
+        <Style Selector="Button.warning-button:disabled TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource WarningButtonDisabledForegroundBrush}" />
+            <Setter Property="Opacity" Value="1" />
+        </Style>
+        <Style Selector="Button.warning:disabled materialIcons|MaterialIcon">
+            <Setter Property="Foreground" Value="{DynamicResource WarningButtonDisabledForegroundBrush}" />
+            <Setter Property="Opacity" Value="1" />
+        </Style>
+        <Style Selector="Button.warning-button:disabled materialIcons|MaterialIcon">
+            <Setter Property="Foreground" Value="{DynamicResource WarningButtonDisabledForegroundBrush}" />
+            <Setter Property="Opacity" Value="1" />
+        </Style>
+        <Style Selector=":is(Button).danger:disabled, :is(Button).danger-button:disabled">
+            <Setter Property="Background" Value="{DynamicResource DangerButtonDisabledBackgroundBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource DangerButtonDisabledForegroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource DangerButtonDisabledBorderBrush}" />
+        </Style>
+        <Style Selector="Button.danger:disabled /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource DangerButtonDisabledBackgroundBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource DangerButtonDisabledForegroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource DangerButtonDisabledBorderBrush}" />
+        </Style>
+        <Style Selector="Button.danger-button:disabled /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource DangerButtonDisabledBackgroundBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource DangerButtonDisabledForegroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource DangerButtonDisabledBorderBrush}" />
+        </Style>
+        <Style Selector="Button.danger:disabled TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource DangerButtonDisabledForegroundBrush}" />
+            <Setter Property="Opacity" Value="1" />
+        </Style>
+        <Style Selector="Button.danger-button:disabled TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource DangerButtonDisabledForegroundBrush}" />
+            <Setter Property="Opacity" Value="1" />
+        </Style>
+        <Style Selector="Button.danger:disabled materialIcons|MaterialIcon">
+            <Setter Property="Foreground" Value="{DynamicResource DangerButtonDisabledForegroundBrush}" />
+            <Setter Property="Opacity" Value="1" />
+        </Style>
+        <Style Selector="Button.danger-button:disabled materialIcons|MaterialIcon">
+            <Setter Property="Foreground" Value="{DynamicResource DangerButtonDisabledForegroundBrush}" />
+            <Setter Property="Opacity" Value="1" />
+        </Style>
+        <Style Selector=":is(Button).transparent-button:disabled, :is(Button).window-action-button:disabled, :is(Button).accent-color-option:disabled">
+            <Setter Property="Opacity" Value="0.56" />
         </Style>
         <Style Selector=":is(Button).model-selector-button">
             <Setter Property="CornerRadius" Value="{DynamicResource CornerRadiusControl}" />
@@ -330,6 +553,14 @@
         <Style Selector=":is(Button).transparent-button:pointerover">
             <Setter Property="Background" Value="{DynamicResource SystemControlHighlightListLowBrush}" />
         </Style>
+        <Style Selector="Button.transparent-button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource SystemControlHighlightListLowBrush}" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+        </Style>
+        <Style Selector="Button.transparent-button:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+        </Style>
         <Style Selector=":is(Button).window-action-button">
             <Setter Property="Width" Value="36" />
             <Setter Property="Height" Value="26" />
@@ -343,9 +574,21 @@
         <Style Selector=":is(Button).window-action-button:pointerover">
             <Setter Property="Background" Value="{DynamicResource SystemControlHighlightListLowBrush}" />
         </Style>
+        <Style Selector="Button.window-action-button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource SystemControlHighlightListLowBrush}" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+        </Style>
+        <Style Selector="Button.window-action-button:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+        </Style>
         <Style Selector=":is(Button).window-action-button.close-button:pointerover">
             <Setter Property="Background" Value="#C42B1C" />
             <Setter Property="Foreground" Value="White" />
+        </Style>
+        <Style Selector="Button.window-action-button.close-button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#C42B1C" />
+            <Setter Property="BorderBrush" Value="#C42B1C" />
         </Style>
         <Style Selector="Border.card">
             <Setter Property="Background" Value="{DynamicResource SurfaceBackgroundBrush}" />
@@ -449,23 +692,38 @@
                     <SolidColorBrush x:Key="SettingsNavigationBorderBrush" Color="#E8EAF0" />
                     <SolidColorBrush x:Key="SettingsListDividerBrush" Color="#E3E6ED" />
                     <SolidColorBrush x:Key="PrimaryButtonForegroundBrush" Color="#FFFFFF" />
-                    <SolidColorBrush x:Key="DefaultButtonBackgroundBrush" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="DefaultButtonDisabledBackgroundBrush" Color="#E3E6ED" />
+                    <SolidColorBrush x:Key="DefaultButtonDisabledForegroundBrush" Color="#62697A" />
+                    <SolidColorBrush x:Key="DefaultButtonDisabledBorderBrush" Color="#C4CAD4" />
+                    <SolidColorBrush x:Key="PrimaryButtonDisabledBackgroundBrush" Color="#BCC8F3" />
+                    <SolidColorBrush x:Key="PrimaryButtonDisabledForegroundBrush" Color="#25345D" />
+                    <SolidColorBrush x:Key="PrimaryButtonDisabledBorderBrush" Color="#8998D0" />
+                    <SolidColorBrush x:Key="WarningButtonDisabledBackgroundBrush" Color="#F0D8AA" />
+                    <SolidColorBrush x:Key="WarningButtonDisabledForegroundBrush" Color="#624516" />
+                    <SolidColorBrush x:Key="WarningButtonDisabledBorderBrush" Color="#D6B66F" />
+                    <SolidColorBrush x:Key="DangerButtonDisabledBackgroundBrush" Color="#F0C4C8" />
+                    <SolidColorBrush x:Key="DangerButtonDisabledForegroundBrush" Color="#7B2F38" />
+                    <SolidColorBrush x:Key="DangerButtonDisabledBorderBrush" Color="#D8959C" />
+                    <SolidColorBrush x:Key="DefaultButtonBackgroundBrush" Color="#F0F2F7" />
                     <SolidColorBrush x:Key="DefaultButtonForegroundBrush" Color="#171A24" />
                     <SolidColorBrush x:Key="DefaultButtonBorderBrush" Color="#E3E6ED" />
-                    <SolidColorBrush x:Key="DefaultButtonHoverBackgroundBrush" Color="#F5F7FA" />
+                    <SolidColorBrush x:Key="DefaultButtonHoverBackgroundBrush" Color="#FFFFFF" />
                     <SolidColorBrush x:Key="DefaultButtonHoverBorderBrush" Color="#C0C4CC" />
-                    <SolidColorBrush x:Key="DefaultButtonPressedBackgroundBrush" Color="#E9ECF2" />
-                    <SolidColorBrush x:Key="DefaultButtonPressedBorderBrush" Color="#A6ABB5" />
+                    <SolidColorBrush x:Key="DefaultButtonPressedBackgroundBrush" Color="#F0F2F7" />
+                    <SolidColorBrush x:Key="DefaultButtonPressedBorderBrush" Color="#E3E6ED" />
+                    <SolidColorBrush x:Key="PrimaryButtonHoverBackgroundBrush" Color="#7185F7" />
                     <SolidColorBrush x:Key="WarningButtonBackgroundBrush" Color="#D99529" />
                     <SolidColorBrush x:Key="WarningButtonForegroundBrush" Color="#241A0D" />
-                    <SolidColorBrush x:Key="WarningButtonHoverBackgroundBrush" Color="#C68624" />
-                    <SolidColorBrush x:Key="WarningButtonPressedBackgroundBrush" Color="#AD741E" />
+                    <SolidColorBrush x:Key="WarningButtonHoverBackgroundBrush" Color="#E2A541" />
+                    <SolidColorBrush x:Key="WarningButtonPressedBackgroundBrush" Color="#D99529" />
                     <SolidColorBrush x:Key="DangerButtonBackgroundBrush" Color="#DC5260" />
                     <SolidColorBrush x:Key="DangerButtonForegroundBrush" Color="#FFFFFF" />
-                    <SolidColorBrush x:Key="DangerButtonHoverBackgroundBrush" Color="#C64451" />
-                    <SolidColorBrush x:Key="DangerButtonPressedBackgroundBrush" Color="#B63A47" />
+                    <SolidColorBrush x:Key="DangerButtonHoverBackgroundBrush" Color="#E66D79" />
+                    <SolidColorBrush x:Key="DangerButtonPressedBackgroundBrush" Color="#DC5260" />
                     <Color x:Key="CodeInlineColor">#CF222E</Color>
                     <Color x:Key="QuoteBorderColor">#E3E6ED</Color>
+                    <SolidColorBrush x:Key="MarkdownInlineCodeBackgroundBrush" Color="#F0F1F5" />
+                    <SolidColorBrush x:Key="MarkdownInlineCodeForegroundBrush" Color="#CF222E" />
                     <x:Double x:Key="FontSizeS">12</x:Double>
                     <x:Double x:Key="FontSizeM">14</x:Double>
                     <x:Double x:Key="FontSizeL">15</x:Double>
@@ -504,23 +762,38 @@
                     <SolidColorBrush x:Key="SettingsNavigationBorderBrush" Color="#242630" />
                     <SolidColorBrush x:Key="SettingsListDividerBrush" Color="#30323C" />
                     <SolidColorBrush x:Key="PrimaryButtonForegroundBrush" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="DefaultButtonDisabledBackgroundBrush" Color="#343741" />
+                    <SolidColorBrush x:Key="DefaultButtonDisabledForegroundBrush" Color="#D0D4DC" />
+                    <SolidColorBrush x:Key="DefaultButtonDisabledBorderBrush" Color="#585C67" />
+                    <SolidColorBrush x:Key="PrimaryButtonDisabledBackgroundBrush" Color="#39466F" />
+                    <SolidColorBrush x:Key="PrimaryButtonDisabledForegroundBrush" Color="#E0E5FF" />
+                    <SolidColorBrush x:Key="PrimaryButtonDisabledBorderBrush" Color="#536497" />
+                    <SolidColorBrush x:Key="WarningButtonDisabledBackgroundBrush" Color="#554326" />
+                    <SolidColorBrush x:Key="WarningButtonDisabledForegroundBrush" Color="#F8E7C5" />
+                    <SolidColorBrush x:Key="WarningButtonDisabledBorderBrush" Color="#806633" />
+                    <SolidColorBrush x:Key="DangerButtonDisabledBackgroundBrush" Color="#563039" />
+                    <SolidColorBrush x:Key="DangerButtonDisabledForegroundBrush" Color="#FFE2E5" />
+                    <SolidColorBrush x:Key="DangerButtonDisabledBorderBrush" Color="#824651" />
                     <SolidColorBrush x:Key="DefaultButtonBackgroundBrush" Color="#1A1B22" />
                     <SolidColorBrush x:Key="DefaultButtonForegroundBrush" Color="#F2F3F7" />
                     <SolidColorBrush x:Key="DefaultButtonBorderBrush" Color="#45474F" />
-                    <SolidColorBrush x:Key="DefaultButtonHoverBackgroundBrush" Color="#252731" />
+                    <SolidColorBrush x:Key="DefaultButtonHoverBackgroundBrush" Color="#292D38" />
                     <SolidColorBrush x:Key="DefaultButtonHoverBorderBrush" Color="#5C5E66" />
-                    <SolidColorBrush x:Key="DefaultButtonPressedBackgroundBrush" Color="#30323C" />
-                    <SolidColorBrush x:Key="DefaultButtonPressedBorderBrush" Color="#6D7078" />
+                    <SolidColorBrush x:Key="DefaultButtonPressedBackgroundBrush" Color="#1A1B22" />
+                    <SolidColorBrush x:Key="DefaultButtonPressedBorderBrush" Color="#45474F" />
+                    <SolidColorBrush x:Key="PrimaryButtonHoverBackgroundBrush" Color="#98A5FF" />
                     <SolidColorBrush x:Key="WarningButtonBackgroundBrush" Color="#F1B75B" />
                     <SolidColorBrush x:Key="WarningButtonForegroundBrush" Color="#2A2114" />
                     <SolidColorBrush x:Key="WarningButtonHoverBackgroundBrush" Color="#F5C675" />
-                    <SolidColorBrush x:Key="WarningButtonPressedBackgroundBrush" Color="#DDA646" />
+                    <SolidColorBrush x:Key="WarningButtonPressedBackgroundBrush" Color="#F1B75B" />
                     <SolidColorBrush x:Key="DangerButtonBackgroundBrush" Color="#F07885" />
-                    <SolidColorBrush x:Key="DangerButtonForegroundBrush" Color="#30171A" />
+                    <SolidColorBrush x:Key="DangerButtonForegroundBrush" Color="#FFFFFF" />
                     <SolidColorBrush x:Key="DangerButtonHoverBackgroundBrush" Color="#F48A95" />
-                    <SolidColorBrush x:Key="DangerButtonPressedBackgroundBrush" Color="#D86270" />
+                    <SolidColorBrush x:Key="DangerButtonPressedBackgroundBrush" Color="#F07885" />
                     <Color x:Key="CodeInlineColor">#FF7B72</Color>
                     <Color x:Key="QuoteBorderColor">#30323C</Color>
+                    <SolidColorBrush x:Key="MarkdownInlineCodeBackgroundBrush" Color="#292D38" />
+                    <SolidColorBrush x:Key="MarkdownInlineCodeForegroundBrush" Color="#FF9A90" />
                     <x:Double x:Key="FontSizeS">12</x:Double>
                     <x:Double x:Key="FontSizeM">14</x:Double>
                     <x:Double x:Key="FontSizeL">15</x:Double>

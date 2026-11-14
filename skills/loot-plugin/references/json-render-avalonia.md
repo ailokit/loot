@@ -72,7 +72,7 @@ loot.ui.setState({ greeting: "你好" });
 loot.ui.notify("已完成");
 ```
 
-See the sample entry for action routing. There is no ES module loader in the current runtime. Consult `native/quickjs/loot_qjs.c` and `Loot/Plugins/QuickJsPluginScriptRuntime.cs` before depending on additional APIs, limits, or lifecycle behavior.
+See the sample entry for action routing. There is no ES module loader in the current runtime. Consult `src/native/quickjs/loot_qjs.c` and `src/Loot/Plugins/QuickJsPluginScriptRuntime.cs` before depending on additional APIs, limits, or lifecycle behavior.
 
 ## Current built-in component registry
 
@@ -100,11 +100,11 @@ The following aliases are registered by `JsonRenderComponentRegistry.CreateDefau
 | Feedback | `Progress`, `ProgressBar` | `min`, `max`, `value`, `isIndeterminate` |
 | Message | `Alert` | `title`, `message` or `text`, `variant`, `padding` |
 
-Choice `options` accepts strings or objects with `label` and `value` (the implementation also accepts `name` as a display label). Props not listed may be ignored. Verify an implementation in `Loot.JsonRender.Avalonia/Components/` before documenting or relying on it. In particular, the current `Switch` aliases render a checkbox-style control rather than a distinct platform switch widget.
+Choice `options` accepts strings or objects with `label` and `value` (the implementation also accepts `name` as a display label). Props not listed may be ignored. Verify an implementation in `src/Loot.JsonRender.Avalonia/Components/` before documenting or relying on it. In particular, the current `Switch` aliases render a checkbox-style control rather than a distinct platform switch widget.
 
 ## Extending the renderer
 
-The default registry is organized by component family in `Loot.JsonRender.Avalonia/Components/LayoutComponents.cs`, `ContentComponents.cs`, `FormComponents.cs`, and `FeedbackComponents.cs`. Add a control to the closest family, keep its factory and input/state behavior local to that family, and register it through `JsonRenderComponentRegistry`. Shared property resolution, expressions, state, and element traversal belong in the renderer/context layer; avoid growing one monolithic component switch.
+The default registry is organized by component family in `src/Loot.JsonRender.Avalonia/Components/LayoutComponents.cs`, `ContentComponents.cs`, `FormComponents.cs`, and `FeedbackComponents.cs`. Add a control to the closest family, keep its factory and input/state behavior local to that family, and register it through `JsonRenderComponentRegistry`. Shared property resolution, expressions, state, and element traversal belong in the renderer/context layer; avoid growing one monolithic component switch.
 
 The registry accepts host-owned `JsonRenderComponentFactory` implementations. This is a trusted .NET extension point for Loot itself or host code. A plugin's JSON only names registered component types; it cannot define a factory, load an Avalonia assembly, or supply XAML. Keep this distinction explicit when proposing a plugin API.
 

@@ -9,7 +9,7 @@ Use this skill when implementing a Loot extension package or one of its UI tools
 
 ## Workflow
 
-1. Read `docs/plugin-system-design.md` for the package and host model, then inspect the relevant code under `Loot/Plugins`, `Loot.JsonRender.Avalonia`, `native/quickjs`, and the example plugin. Follow current behavior if it differs from the design document.
+1. Read `docs/plugin-system-design.md` for the package and host model, then inspect the relevant code under `src/Loot/Plugins`, `src/Loot.JsonRender.Avalonia`, `src/native/quickjs`, and the example plugin. Follow current behavior if it differs from the design document.
 2. Keep each plugin self-contained under the Loot data directory's `plugins/<manifest-id>/` folder. Use `plugin.json`, a separate `ui.json` per tool, and a separate JavaScript entry file. The installed directory name must exactly match the manifest `id`; all tool `ui` and `entry` paths must resolve inside that package.
 3. Use the existing example as a working template, updating its manifest, JSON UI, and JS behavior together when extending the example. For new UI work, read [references/json-render-avalonia.md](references/json-render-avalonia.md) before writing the spec.
 4. Keep plugin logic in the supported JavaScript runtime API. Do not assume filesystem, network, native module, ES module import, or arbitrary Avalonia/XAML access exists; inspect the current host API before using any capability.
@@ -20,5 +20,5 @@ Use this skill when implementing a Loot extension package or one of its UI tools
 ## References
 
 - For UI spec syntax, supported expressions, bindings, watchers, components, and extension points, read [references/json-render-avalonia.md](references/json-render-avalonia.md).
-- For package shape and manifest fields, inspect `docs/plugin-system-design.md`, `Loot/Plugins/PluginManifest.cs`, `Loot/Plugins/PluginCatalog.cs`, and `examples/plugins/hello/plugin.json`.
-- For JavaScript host API and runtime behavior, inspect `native/quickjs/loot_qjs.c`, `Loot/Plugins/QuickJsPluginScriptRuntime.cs`, and `examples/plugins/hello/tools/hello/main.js`.
+- For package shape and manifest fields, inspect `docs/plugin-system-design.md`, `src/Loot/Plugins/PluginManifest.cs`, `src/Loot/Plugins/PluginCatalog.cs`, and `examples/plugins/hello/plugin.json`.
+- For JavaScript host API and runtime behavior, inspect `src/native/quickjs/loot_qjs.c`, `src/Loot/Plugins/QuickJsPluginScriptRuntime.cs`, and `examples/plugins/hello/tools/hello/main.js`.
