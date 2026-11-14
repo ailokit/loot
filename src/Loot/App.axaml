@@ -410,37 +410,67 @@
             <Setter Property="CornerRadius" Value="{DynamicResource CornerRadiusInput}" />
             <Setter Property="MinHeight" Value="30" />
             <Setter Property="FontSize" Value="13" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="BorderBrush" Value="{DynamicResource InputControlBorderBrush}" />
             <Setter Property="Padding" Value="10,5" />
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
         </Style>
+        <Style Selector="TextBox.chat-composer-input">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="LineHeight" Value="20" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+        </Style>
         <Style Selector=":is(TextBox):focus">
             <Setter Property="BorderBrush" Value="{DynamicResource SystemControlHighlightAltAccentBrush}" />
             <Setter Property="BorderThickness" Value="2" />
+        </Style>
+        <Style Selector="TextBox.chat-composer-input:focus">
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+        </Style>
+        <!-- Fluent's focus and hover states style the template border directly. -->
+        <Style Selector="TextBox.chat-composer-input /template/ Border#PART_BorderElement, TextBox.chat-composer-input:focus /template/ Border#PART_BorderElement, TextBox.chat-composer-input:pointerover /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}" />
         </Style>
         <Style Selector=":is(ComboBox)">
             <Setter Property="CornerRadius" Value="{DynamicResource CornerRadiusInput}" />
             <Setter Property="MinHeight" Value="30" />
             <Setter Property="FontSize" Value="13" />
-            <Setter Property="Background" Value="{DynamicResource ComboBoxBackgroundBrush}" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}" />
             <Setter Property="BorderBrush" Value="{DynamicResource InputControlBorderBrush}" />
         </Style>
         <Style Selector="ComboBox /template/ Border#Background">
             <Setter Property="CornerRadius" Value="{DynamicResource CornerRadiusInput}" />
-            <Setter Property="Background" Value="{DynamicResource ComboBoxBackgroundBrush}" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}" />
             <Setter Property="BorderBrush" Value="{DynamicResource InputControlBorderBrush}" />
         </Style>
         <Style Selector="ComboBox /template/ Border#HighlightBackground">
             <Setter Property="CornerRadius" Value="{DynamicResource CornerRadiusInput}" />
-            <Setter Property="Background" Value="{DynamicResource ComboBoxBackgroundBrush}" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}" />
+        </Style>
+        <Style Selector="ComboBox.model-picker">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="0" />
+            <Setter Property="FocusAdorner" Value="{x:Null}" />
+        </Style>
+        <Style Selector="ComboBox.model-picker /template/ Border#Background, ComboBox.model-picker /template/ Border#HighlightBackground">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="0" />
         </Style>
         <!-- ComboBox's popup is hosted in a separate visual tree, so its named border
              must be targeted directly instead of through the ComboBox ancestor. -->
         <Style Selector="ComboBox:dropdownopen /template/ Border#PopupBorder">
             <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
-            <Setter Property="Background" Value="{DynamicResource PopupBackgroundBrush}" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}" />
             <Setter Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}" />
             <Setter Property="BorderThickness" Value="1" />
         </Style>
@@ -465,6 +495,7 @@
         </Style>
         <Style Selector=":is(ListBox)">
             <Setter Property="CornerRadius" Value="{DynamicResource CornerRadiusControl}" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}" />
             <Setter Property="BorderBrush" Value="{DynamicResource InputControlBorderBrush}" />
         </Style>
         <Style Selector=":is(ListBoxItem)">
@@ -485,13 +516,13 @@
         <!-- Fluent menus use their own presenter, so apply the shared corner radius directly. -->
         <Style Selector="MenuFlyoutPresenter">
             <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
-            <Setter Property="Background" Value="{DynamicResource PopupBackgroundBrush}" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}" />
             <Setter Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}" />
             <Setter Property="BorderThickness" Value="1" />
         </Style>
         <Style Selector="MenuFlyoutPresenter /template/ Border">
             <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
-            <Setter Property="Background" Value="{DynamicResource PopupBackgroundBrush}" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}" />
             <Setter Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}" />
             <Setter Property="BorderThickness" Value="1" />
         </Style>
@@ -505,31 +536,31 @@
              MenuFlyoutPresenter, so style that nested surface separately. -->
         <Style Selector="MenuItem /template/ Popup#PART_Popup Border">
             <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
-            <Setter Property="Background" Value="{DynamicResource PopupBackgroundBrush}" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}" />
             <Setter Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}" />
             <Setter Property="BorderThickness" Value="1" />
         </Style>
         <Style Selector="ContextMenu">
             <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
-            <Setter Property="Background" Value="{DynamicResource PopupBackgroundBrush}" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}" />
             <Setter Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}" />
             <Setter Property="BorderThickness" Value="1" />
         </Style>
         <Style Selector="ContextMenu /template/ Border">
             <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
-            <Setter Property="Background" Value="{DynamicResource PopupBackgroundBrush}" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}" />
             <Setter Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}" />
             <Setter Property="BorderThickness" Value="1" />
         </Style>
         <Style Selector="FlyoutPresenter">
             <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
-            <Setter Property="Background" Value="{DynamicResource PopupBackgroundBrush}" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}" />
             <Setter Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}" />
             <Setter Property="BorderThickness" Value="1" />
         </Style>
         <Style Selector="FlyoutPresenter /template/ Border">
             <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
-            <Setter Property="Background" Value="{DynamicResource PopupBackgroundBrush}" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}" />
             <Setter Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}" />
             <Setter Property="BorderThickness" Value="1" />
         </Style>

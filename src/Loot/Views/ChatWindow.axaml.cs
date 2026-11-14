@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Input.Platform;
 using Avalonia.Interactivity;
@@ -15,6 +16,9 @@ namespace Loot.Views;
 
 internal partial class ChatWindow : LootWindow
 {
+    private const double WideLayoutBreakpoint = 820;
+    private const double HistoryPanelWidth = 240;
+
     private readonly ChatWindowViewModel _viewModel;
     private readonly IGlobalHotKeyService _globalHotKeys;
     private readonly ILogger<ChatWindow> _logger;
@@ -36,9 +40,39 @@ internal partial class ChatWindow : LootWindow
         DataContext = viewModel;
         viewModel.AttachStorageProvider(StorageProvider);
         InitializeComponent();
+        SizeChanged += OnWindowSizeChanged;
+        UpdateResponsiveLayout(Bounds.Width);
         DraftTextBox.AddHandler(KeyDownEvent, OnDraftKeyDown, RoutingStrategies.Tunnel);
         DraftTextBox.AddHandler(TextBox.PastingFromClipboardEvent, OnDraftPastingFromClipboard, RoutingStrategies.Tunnel);
         Activated += OnWindowActivated;
+    }
+
+    private void OnWindowSizeChanged(object? sender, SizeChangedEventArgs e) =>
+        UpdateResponsiveLayout(e.NewSize.Width);
+
+    private void OnSkillSelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (sender is ListBox { SelectedItem: not null } &&
+            FlyoutBase.GetAttachedFlyout(SkillPickerButton) is { IsOpen: true } flyout)
+        {
+            flyout.Hide();
+        }
+    }
+
+    private void UpdateResponsiveLayout(double width)
+    {
+        var isWide = width >= WideLayoutBreakpoint;
+        WindowLayout.ColumnDefinitions[0].Width = isWide
+            ? new GridLength(HistoryPanelWidth)
+            : new GridLength(1, GridUnitType.Star);
+        WindowLayout.ColumnDefinitions[1].Width = isWide
+            ? new GridLength(1, GridUnitType.Star)
+            : new GridLength(0);
+        HistoryPanel.IsVisible = isWide;
+        ConversationComboBox.IsVisible = !isWide;
+        WideNewConversationButton.IsVisible = isWide;
+        NarrowNewConversationButton.IsVisible = !isWide;
+        Grid.SetColumn(ChatLayout, isWide ? 1 : 0);
     }
 
     protected override void OnOpened(EventArgs e)
@@ -265,6 +299,7 @@ internal partial class ChatWindow : LootWindow
     protected override void OnClosed(EventArgs e)
     {
         Activated -= OnWindowActivated;
+        SizeChanged -= OnWindowSizeChanged;
         // The base window disposes the ViewModel (DataContext) and the scope,
         // which triggers full cleanup of all window-scoped resources.
         base.OnClosed(e);

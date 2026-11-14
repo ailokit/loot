@@ -5,7 +5,6 @@
         xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         xmlns:skills="clr-namespace:Loot.AI.Skills"
         xmlns:conversations="clr-namespace:Loot.AI.Conversations"
-        xmlns:providers="clr-namespace:Loot.AI.Providers"
         x:Class="Loot.Views.ChatWindow"
         x:ClassModifier="internal"
         KeyDown="OnWindowKeyDown"
@@ -34,59 +33,41 @@
             </Button>
         </StackPanel>
     </local:LootWindow.CustomTitleBarButtons>
-    <Grid x:Name="WindowLayout">
-        <DockPanel Margin="10,2,10,10" LastChildFill="True" VerticalSpacing="8">
-            <DockPanel DockPanel.Dock="Top" LastChildFill="True" HorizontalSpacing="4">
-                <Button Classes="model-selector-button" HorizontalAlignment="Left" Padding="0" Margin="0"
-                        Height="32" VerticalContentAlignment="Center" DockPanel.Dock="Left">
-                    <Button.Content>
-                        <Border BorderBrush="{DynamicResource InputControlBorderBrush}"
-                                BorderThickness="1" Padding="8,2" CornerRadius="{DynamicResource CornerRadiusInput}">
-                            <StackPanel Spacing="0">
-                                <TextBlock Text="{Binding SelectedProviderDisplayName}" FontSize="12"
-                                           FontWeight="SemiBold" />
-                                <TextBlock Text="{Binding SelectedModelDisplayName}" FontSize="11" Opacity="0.7" />
-                            </StackPanel>
-                        </Border>
-                    </Button.Content>
-                    <Button.Flyout>
-                        <MenuFlyout
-                            Placement="BottomEdgeAlignedLeft"
-                            ItemsSource="{Binding AppState.Providers}">
-                            <MenuFlyout.ItemContainerTheme>
-                                <ControlTheme TargetType="MenuItem"
-                                              BasedOn="{StaticResource {x:Type MenuItem}}"
-                                              x:DataType="providers:ApiProvider">
-                                    <Setter Property="Header" Value="{Binding Name}" />
-                                    <Setter Property="ItemsSource">
-                                        <Setter.Value>
-                                            <MultiBinding
-                                                Converter="{x:Static vm:AiProviderMenuDataConverter.Instance}">
-                                                <Binding Path=""></Binding>
-                                                <Binding Path="$parent[Window].DataContext"></Binding>
-                                            </MultiBinding>
-                                        </Setter.Value>
-                                    </Setter>
-                                    <Setter Property="ItemContainerTheme">
-                                        <ControlTheme TargetType="MenuItem"
-                                                      BasedOn="{StaticResource {x:Type MenuItem}}"
-                                                      x:DataType="vm:ModelMenuItem">
-                                            <Setter Property="Header" Value="{Binding ModelId}" />
-                                            <Setter Property="Command" Value="{Binding SelectCommand}" />
-                                        </ControlTheme>
-                                    </Setter>
-                                </ControlTheme>
-                            </MenuFlyout.ItemContainerTheme>
-                        </MenuFlyout>
-                    </Button.Flyout>
+    <Grid x:Name="WindowLayout" ColumnDefinitions="0,*">
+        <Border x:Name="HistoryPanel" Grid.Column="0" Classes="card" Margin="10,2,0,10"
+                Padding="8" IsVisible="False">
+            <DockPanel LastChildFill="True">
+                <Button x:Name="WideNewConversationButton" DockPanel.Dock="Top" Classes="primary-button"
+                        Command="{Binding NewConversationCommand}" Height="36" Padding="10,6"
+                        HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="0,0,0,8"
+                        ToolTip.Tip="{Binding Localization[NewConversation]}"
+                        AutomationProperties.Name="{Binding Localization[NewConversation]}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <materialIcons:MaterialIcon Kind="Plus" Width="18" Height="18" />
+                        <TextBlock Text="{Binding Localization[NewConversation]}" VerticalAlignment="Center" />
+                    </StackPanel>
                 </Button>
-                <Button Classes="primary-button" DockPanel.Dock="Right" Command="{Binding NewConversationCommand}"
+                <ListBox Background="Transparent" BorderBrush="Transparent"
+                         ItemsSource="{Binding AppState.Conversations}"
+                         SelectedItem="{Binding SelectedConversation}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="conversations:Conversation">
+                            <TextBlock Text="{Binding Title}" TextWrapping="Wrap" />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </DockPanel>
+        </Border>
+        <DockPanel x:Name="ChatLayout" Grid.Column="0" Margin="10,2,10,10" LastChildFill="True" VerticalSpacing="8">
+            <DockPanel DockPanel.Dock="Top" LastChildFill="True" HorizontalSpacing="4">
+                <Button x:Name="NarrowNewConversationButton" Classes="primary-button" DockPanel.Dock="Right"
+                        Command="{Binding NewConversationCommand}"
                         Height="32"
                         ToolTip.Tip="{Binding Localization[NewConversation]}"
                         AutomationProperties.Name="{Binding Localization[NewConversation]}" Padding="8">
                     <materialIcons:MaterialIcon Kind="Plus" Width="18" Height="18" />
                 </Button>
-                <ComboBox HorizontalAlignment="Stretch"
+                <ComboBox x:Name="ConversationComboBox" HorizontalAlignment="Stretch"
                           ItemsSource="{Binding  AppState.Conversations}"
                           SelectedItem="{Binding SelectedConversation}"
                           VerticalAlignment="Center"
@@ -101,66 +82,6 @@
                 </ComboBox>
             </DockPanel>
             <DockPanel DockPanel.Dock="Bottom" LastChildFill="True" HorizontalSpacing="4">
-                <ComboBox DockPanel.Dock="Left" Height="32" ItemsSource="{Binding AppState.Skills}"
-                          SelectedItem="{Binding SelectedSkill}"
-                          PlaceholderText="{Binding Localization[SkillPlaceholder]}">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate x:DataType="skills:Skill">
-                            <TextBlock Text="{Binding Name}" />
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-                <Button DockPanel.Dock="Left" Classes="transparent-button" Width="32" Height="32" Padding="0"
-                        Command="{Binding AddFilesCommand}"
-                        IsVisible="{Binding ShowAddAttachmentButton}"
-                        ToolTip.Tip="{Binding Localization[AddImage]}"
-                        AutomationProperties.Name="{Binding Localization[AddImage]}">
-                    <materialIcons:MaterialIcon Kind="FileImage" Width="18" Height="18" />
-                </Button>
-                <Button DockPanel.Dock="Left" Classes="transparent-button" Width="32" Height="32" Padding="0"
-                        ToolTip.Tip="{Binding Localization[SelectWorkspace]}"
-                        AutomationProperties.Name="{Binding Localization[SelectWorkspace]}">
-                    <materialIcons:MaterialIcon Kind="FolderOpen" Width="18" Height="18" />
-                    <Button.Flyout>
-                        <MenuFlyout  Placement="TopEdgeAlignedLeft">
-                            <MenuItem Header="{Binding Localization[SelectWorkspaceFiles]}"
-                                      Command="{Binding AddWorkspaceFilesCommand}" />
-                            <MenuItem Header="{Binding Localization[SelectWorkspaceFolders]}"
-                                      Command="{Binding AddWorkspaceFoldersCommand}" />
-                        </MenuFlyout>
-                    </Button.Flyout>
-                </Button>
-                <Button DockPanel.Dock="Left" Classes="transparent-button" Width="32" Height="32" Padding="0"
-                        IsEnabled="{Binding HasSessionTools}"
-                        ToolTip.Tip="{Binding Localization[Tools]}"
-                        AutomationProperties.Name="{Binding Localization[Tools]}">
-                    <materialIcons:MaterialIcon Kind="WrenchOutline" Width="18" Height="18" />
-                    <Button.Flyout>
-                        <!-- A regular Flyout keeps its content open while checkboxes are toggled. -->
-                        <Flyout Placement="TopEdgeAlignedLeft">
-                            <StackPanel Spacing="6">
-                                <TextBlock Text="{Binding Localization[Tools]}"
-                                           FontWeight="SemiBold" Margin="2,0,0,2" />
-                                <ToggleSwitch IsChecked="{Binding CleanMode, Mode=TwoWay}"
-                                              OnContent="{Binding Localization[CleanMode]}"
-                                              OffContent="{Binding Localization[CleanMode]}"
-                                              ToolTip.Tip="{Binding Localization[CleanModeDescription]}"
-                                              Padding="4,3" />
-                                <ItemsControl ItemsSource="{Binding SessionTools}"
-                                              IsEnabled="{Binding AreSessionToolsEnabled}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate x:DataType="vm:SessionToolSelection">
-                                            <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}"
-                                                      Content="{Binding DisplayName}"
-                                                      ToolTip.Tip="{Binding Description}"
-                                                      Padding="4,3" />
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </StackPanel>
-                        </Flyout>
-                    </Button.Flyout>
-                </Button>
                 <ItemsControl DockPanel.Dock="Right"
                               ItemsSource="{Binding WorkspaceEntries}"
                               IsVisible="{Binding HasWorkspaceEntries}"
@@ -238,23 +159,141 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-                    <TextBox x:Name="DraftTextBox" Text="{Binding Draft, Mode=OneWay}"
-                             TextChanged="OnDraftTextChanged"
-                             PlaceholderText="{Binding Localization[InputPlaceholder]}"
-                             AcceptsReturn="True"
-                             TextWrapping="Wrap"
-                             VerticalContentAlignment="Center"
-                             Padding="8,2" MinHeight="32"
-                             CaretBrush="{DynamicResource SystemControlForegroundBaseHighBrush}" />
-                    <Button Classes="primary-button" Grid.Column="1" Command="{Binding SendOrStopCommand}"
-                            ToolTip.Tip="{Binding SendButtonText}" AutomationProperties.Name="{Binding SendButtonText}"
-                            Padding="10,8" MinWidth="42">
-                        <Button.Content>
-                            <materialIcons:MaterialIcon Kind="{Binding SendButtonIcon}" Width="18" Height="18" />
-                        </Button.Content>
-                    </Button>
-                </Grid>
+                <Border Classes="card" Padding="6">
+                    <Grid RowDefinitions="*,Auto" RowSpacing="0">
+                        <TextBox x:Name="DraftTextBox" Classes="chat-composer-input" Grid.Row="0"
+                                 Text="{Binding Draft, Mode=OneWay}"
+                                 TextChanged="OnDraftTextChanged"
+                                 PlaceholderText="{Binding Localization[InputPlaceholder]}"
+                                 AcceptsReturn="True" TextWrapping="Wrap"
+                                 BorderBrush="Transparent" BorderThickness="0" FocusAdorner="{x:Null}"
+                                 VerticalAlignment="Stretch" VerticalContentAlignment="Top"
+                                 Padding="4,0" MinHeight="46" MaxHeight="180"
+                                 CaretBrush="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="3"
+                                        VerticalAlignment="Center">
+                                <Button x:Name="SkillPickerButton" Classes="transparent-button"
+                                        Height="32" MaxWidth="120" Padding="4,0"
+                                        ToolTip.Tip="{Binding SelectedSkill.Name}"
+                                        AutomationProperties.Name="{Binding SelectedSkill.Name}">
+                                    <Grid>
+                                        <materialIcons:MaterialIcon Kind="ChatOutline" Width="20" Height="20"
+                                                                    IsVisible="{Binding IsDefaultSkillSelected}" />
+                                        <Border Background="{DynamicResource SystemControlBackgroundAltMediumBrush}"
+                                                BorderBrush="{DynamicResource ControlBorderBrush}" BorderThickness="1"
+                                                CornerRadius="{DynamicResource CornerRadiusSmall}" Padding="6,3"
+                                                IsVisible="{Binding HasNonDefaultSkillSelected}">
+                                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                                <materialIcons:MaterialIcon Kind="LabelOutline" Width="14" Height="14"
+                                                                            VerticalAlignment="Center" />
+                                                <TextBlock Text="{Binding SelectedSkill.Name}" MaxWidth="88"
+                                                           TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                                            </StackPanel>
+                                        </Border>
+                                    </Grid>
+                                    <Button.Flyout>
+                                        <Flyout Placement="TopEdgeAlignedLeft">
+                                            <ListBox ItemsSource="{Binding AppState.Skills}"
+                                                     SelectedItem="{Binding SelectedSkill, Mode=TwoWay}"
+                                                     SelectionChanged="OnSkillSelectionChanged"
+                                                     MinWidth="220" MaxHeight="320">
+                                                <ListBox.ItemTemplate>
+                                                    <DataTemplate x:DataType="skills:Skill">
+                                                        <TextBlock Text="{Binding Name}" />
+                                                    </DataTemplate>
+                                                </ListBox.ItemTemplate>
+                                            </ListBox>
+                                        </Flyout>
+                                    </Button.Flyout>
+                                </Button>
+                                <Button Classes="transparent-button" Width="32" Height="32" Padding="0"
+                                        Command="{Binding AddFilesCommand}"
+                                        IsVisible="{Binding ShowAddAttachmentButton}"
+                                        ToolTip.Tip="{Binding Localization[AddImage]}"
+                                        AutomationProperties.Name="{Binding Localization[AddImage]}">
+                                    <materialIcons:MaterialIcon Kind="FileImage" Width="18" Height="18" />
+                                </Button>
+                                <Button Classes="transparent-button" Width="32" Height="32" Padding="0"
+                                        ToolTip.Tip="{Binding Localization[SelectWorkspace]}"
+                                        AutomationProperties.Name="{Binding Localization[SelectWorkspace]}">
+                                    <materialIcons:MaterialIcon Kind="FolderOpen" Width="18" Height="18" />
+                                    <Button.Flyout>
+                                        <MenuFlyout Placement="TopEdgeAlignedLeft">
+                                            <MenuItem Header="{Binding Localization[SelectWorkspaceFiles]}"
+                                                      Command="{Binding AddWorkspaceFilesCommand}" />
+                                            <MenuItem Header="{Binding Localization[SelectWorkspaceFolders]}"
+                                                      Command="{Binding AddWorkspaceFoldersCommand}" />
+                                        </MenuFlyout>
+                                    </Button.Flyout>
+                                </Button>
+                                <Button Classes="transparent-button" Width="32" Height="32" Padding="0"
+                                        IsEnabled="{Binding HasSessionTools}"
+                                        ToolTip.Tip="{Binding Localization[Tools]}"
+                                        AutomationProperties.Name="{Binding Localization[Tools]}">
+                                    <materialIcons:MaterialIcon Kind="WrenchOutline" Width="18" Height="18" />
+                                    <Button.Flyout>
+                                        <Flyout Placement="TopEdgeAlignedLeft">
+                                            <StackPanel Spacing="6">
+                                                <TextBlock Text="{Binding Localization[Tools]}"
+                                                           FontWeight="SemiBold" Margin="2,0,0,2" />
+                                                <ToggleSwitch IsChecked="{Binding CleanMode, Mode=TwoWay}"
+                                                              OnContent="{Binding Localization[CleanMode]}"
+                                                              OffContent="{Binding Localization[CleanMode]}"
+                                                              ToolTip.Tip="{Binding Localization[CleanModeDescription]}"
+                                                              Padding="4,3" />
+                                                <ItemsControl ItemsSource="{Binding SessionTools}"
+                                                              IsEnabled="{Binding AreSessionToolsEnabled}">
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate x:DataType="vm:SessionToolSelection">
+                                                            <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                                                      Content="{Binding DisplayName}"
+                                                                      ToolTip.Tip="{Binding Description}"
+                                                                      Padding="4,3" />
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </StackPanel>
+                                        </Flyout>
+                                    </Button.Flyout>
+                                </Button>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6"
+                                        VerticalAlignment="Center">
+                                <ComboBox Classes="model-picker" ItemsSource="{Binding ModelPickerItems}"
+                                          SelectedItem="{Binding SelectedModelPickerItem, Mode=TwoWay}"
+                                          Height="36" MinWidth="0"
+                                          HorizontalAlignment="Right"
+                                          ToolTip.Tip="{Binding SelectedProviderDisplayName}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate x:DataType="vm:ModelPickerItem">
+                                            <Grid>
+                                                <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold"
+                                                           IsVisible="{Binding IsGroupHeader}" />
+                                                <TextBlock Text="{Binding DisplayName}" Margin="12,0,0,0"
+                                                           IsVisible="{Binding IsModel}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                    <ComboBox.ItemContainerTheme>
+                                        <ControlTheme TargetType="ComboBoxItem"
+                                                      BasedOn="{StaticResource {x:Type ComboBoxItem}}"
+                                                      x:DataType="vm:ModelPickerItem">
+                                            <Setter Property="IsEnabled" Value="{Binding IsSelectable}" />
+                                        </ControlTheme>
+                                    </ComboBox.ItemContainerTheme>
+                                </ComboBox>
+                                <Button Classes="primary-button" Command="{Binding SendOrStopCommand}"
+                                        ToolTip.Tip="{Binding SendButtonText}"
+                                        AutomationProperties.Name="{Binding SendButtonText}"
+                                        Padding="0" MinHeight="0" VerticalAlignment="Center"
+                                        VerticalContentAlignment="Center">
+                                    <materialIcons:MaterialIcon Kind="{Binding SendButtonIcon}" Width="18" Height="18" />
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+                </Border>
             </StackPanel>
             <Border Classes="card" Grid.Row="3" Padding="12">
                 <local:ConversationMessagesView ItemsSource="{Binding Messages}" />

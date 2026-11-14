@@ -90,6 +90,7 @@ public sealed partial class ChatWindowViewModel : ViewModelBase
         ChatShortcut = AppState.ChatShortcut;
         NewChatWindowShortcut = AppState.NewChatWindowShortcut;
         AppState.PropertyChanged += OnAppStatePropertyChanged;
+        RebuildModelPickerItems();
     }
 
     public AppState AppState { get; }
@@ -101,6 +102,8 @@ public sealed partial class ChatWindowViewModel : ViewModelBase
     public ObservableCollection<AttachmentViewModel> Attachments { get; } = [];
 
     public ObservableCollection<WorkspaceEntryViewModel> WorkspaceEntries { get; } = [];
+
+    public ObservableCollection<ModelPickerItem> ModelPickerItems { get; } = [];
 
     /// <summary>Tools enabled in application settings and selected for this chat session.</summary>
     public ObservableCollection<SessionToolSelection> SessionTools { get; } = [];
@@ -119,6 +122,8 @@ public sealed partial class ChatWindowViewModel : ViewModelBase
     [ObservableProperty] private ApiProvider? _selectedProvider;
 
     [ObservableProperty] private string? _selectedModelId;
+
+    [ObservableProperty] private ModelPickerItem? _selectedModelPickerItem;
 
     [ObservableProperty] private Conversation? _selectedConversation;
 
@@ -147,6 +152,11 @@ public sealed partial class ChatWindowViewModel : ViewModelBase
 
     public bool ShowAddAttachmentButton =>
         SelectedProvider is not null && SelectedModelId is not null && SelectedProvider.MultimodalModelIds.Contains(SelectedModelId);
+
+    public bool IsDefaultSkillSelected => SelectedSkill is null || AppState.Skills.Count == 0 ||
+        string.Equals(SelectedSkill.Id, AppState.Skills[0].Id, StringComparison.Ordinal);
+
+    public bool HasNonDefaultSkillSelected => SelectedSkill is not null && !IsDefaultSkillSelected;
 
     public bool HasWorkspaceEntries => WorkspaceEntries.Count > 0;
 
@@ -614,6 +624,9 @@ public sealed partial class ChatWindowViewModel : ViewModelBase
     {
         switch (e.PropertyName)
         {
+            case nameof(AppState.Providers):
+                RebuildModelPickerItems();
+                break;
             case nameof(AppState.ChatShortcut):
                 ChatShortcut = AppState.ChatShortcut;
                 break;
@@ -693,6 +706,7 @@ public sealed partial class ChatWindowViewModel : ViewModelBase
         OnPropertyChanged(nameof(SelectedModelDisplayName));
         if (!_openingConversation) ResetConversation();
         if (value is not null) SelectedModelId = value.ModelId;
+        UpdateSelectedModelPickerItem();
         OnPropertyChanged(nameof(ShowAddAttachmentButton));
         if (!ShowAddAttachmentButton) ClearUnsentAttachments();
     }
@@ -700,6 +714,7 @@ public sealed partial class ChatWindowViewModel : ViewModelBase
     partial void OnSelectedModelIdChanged(string? value)
     {
         OnPropertyChanged(nameof(SelectedModelDisplayName));
+        UpdateSelectedModelPickerItem();
         if (!_openingConversation && !string.IsNullOrWhiteSpace(value)) ResetConversation();
         OnPropertyChanged(nameof(ShowAddAttachmentButton));
         if (!ShowAddAttachmentButton) ClearUnsentAttachments();
@@ -707,6 +722,9 @@ public sealed partial class ChatWindowViewModel : ViewModelBase
 
     partial void OnSelectedSkillChanged(Skill? value)
     {
+        OnPropertyChanged(nameof(IsDefaultSkillSelected));
+        OnPropertyChanged(nameof(HasNonDefaultSkillSelected));
+
         if (value is null)
         {
             // The selection can briefly become null while AppState replaces the
@@ -741,7 +759,12 @@ public sealed partial class ChatWindowViewModel : ViewModelBase
         // The skills list is mutated from a worker thread during a reload, so
         // repair the selection back on the UI thread (idempotent + re-runs on
         // the final state after the last collection change).
-        Dispatcher.UIThread.Post(RestoreSkillSelection);
+        Dispatcher.UIThread.Post(() =>
+        {
+            OnPropertyChanged(nameof(IsDefaultSkillSelected));
+            OnPropertyChanged(nameof(HasNonDefaultSkillSelected));
+            RestoreSkillSelection();
+        });
     }
 
     internal void RestoreSkillSelection()
@@ -783,6 +806,68 @@ public sealed partial class ChatWindowViewModel : ViewModelBase
     {
         SelectedProvider = provider;
         SelectedModelId = model;
+    }
+
+    private bool _updatingModelPickerSelection;
+
+    partial void OnSelectedModelPickerItemChanged(ModelPickerItem? value)
+    {
+        if (_updatingModelPickerSelection)
+        {
+            return;
+        }
+
+        if (value is { IsGroupHeader: false, Provider: not null, ModelId: not null })
+        {
+            SelectModel(value.Provider, value.ModelId);
+        }
+        else
+        {
+            UpdateSelectedModelPickerItem();
+        }
+    }
+
+    private void RebuildModelPickerItems()
+    {
+        ModelPickerItems.Clear();
+        foreach (var provider in AppState.Providers)
+        {
+            var models = provider.ModelIds.Where(static model => !string.IsNullOrWhiteSpace(model)).ToArray();
+            if (models.Length == 0)
+            {
+                continue;
+            }
+
+            ModelPickerItems.Add(ModelPickerItem.Group(provider));
+            foreach (var model in models)
+            {
+                ModelPickerItems.Add(ModelPickerItem.Model(provider, model));
+            }
+        }
+
+        UpdateSelectedModelPickerItem();
+    }
+
+    private void UpdateSelectedModelPickerItem()
+    {
+        var selected = SelectedProvider is null || SelectedModelId is null
+            ? null
+            : ModelPickerItems.FirstOrDefault(item => !item.IsGroupHeader &&
+                item.Provider?.Id == SelectedProvider.Id && item.ModelId == SelectedModelId);
+        if (ReferenceEquals(SelectedModelPickerItem, selected))
+        {
+            return;
+        }
+
+        _updatingModelPickerSelection = true;
+        try
+        {
+            SelectedModelPickerItem = selected;
+        }
+        finally
+        {
+            _updatingModelPickerSelection = false;
+        }
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────
