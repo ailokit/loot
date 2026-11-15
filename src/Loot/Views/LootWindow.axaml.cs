@@ -1,14 +1,10 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Chrome;
 using Avalonia.Interactivity;
-using Avalonia.Platform;
-using Loot;
-using Loot.Logging;
+using Avalonia.Styling;
 using Material.Icons;
-using Material.Icons.Avalonia;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using System.Runtime.InteropServices;
 
 namespace Loot.Views;
 
@@ -22,29 +18,44 @@ public abstract class LootWindow : Avalonia.Controls.Window
     public static readonly StyledProperty<Control?> CustomTitleBarButtonsProperty =
         AvaloniaProperty.Register<LootWindow, Control?>(nameof(CustomTitleBarButtons));
 
-    private const int WindowStyleIndex = -16;
-    private const long WindowStyleCaption = 0x00C00000L;
-    private const long WindowStyleSystemMenu = 0x00080000L;
-    private const long WindowStyleMinimizeBox = 0x00020000L;
-    private const long WindowStyleMaximizeBox = 0x00010000L;
-    private const uint SetWindowPosFrameChanged = 0x0020;
-    private const uint SetWindowPosNoActivate = 0x0010;
-    private const uint SetWindowPosNoMove = 0x0002;
-    private const uint SetWindowPosNoSize = 0x0001;
-    private const uint SetWindowPosNoZOrder = 0x0004;
-    private const int DwmWindowCornerPreferenceAttribute = 33;
-    private const int DwmWindowCornerPreferenceRound = 2;
-
-    private readonly LootWindowChrome _chrome;
+    private readonly LootWindowChrome? _chrome;
+    private readonly ContentControl _contentHost;
     private bool _routingContent;
 
     protected LootWindow()
     {
-        WindowDecorations = WindowDecorations.None;
         ExtendClientAreaToDecorationsHint = true;
-        _chrome = new LootWindowChrome();
-        _chrome.CustomTitleBarButtonsHost.Content = CustomTitleBarButtons;
-        Content = _chrome;
+        if (OperatingSystem.IsWindows())
+        {
+            // Full keeps WS_CAPTION/WS_THICKFRAME under Avalonia's control across
+            // state, capability and DPI changes. The decorations theme replaces
+            // the title bar visually without removing native window behavior.
+            WindowDecorations = WindowDecorations.Full;
+            ExtendClientAreaTitleBarHeightHint = 28;
+            var resources = new WindowsWindowDecorations();
+            WindowDecorationsTheme = new ControlTheme(typeof(WindowDrawnDecorations))
+            {
+                BasedOn = (ControlTheme)resources["LootWindowsWindowDecorations"]!,
+                Setters = { new Setter(StyledElement.DataContextProperty, new WindowsWindowDecorationsContext(this)) }
+            };
+            Win32Properties.SetWindowCornerPreference(this, Win32Properties.WindowCornerPreference.Round);
+            _contentHost = new ContentControl
+            {
+                HorizontalContentAlignment = Avalonia.Layout.HorizontalAlignment.Stretch,
+                VerticalContentAlignment = Avalonia.Layout.VerticalAlignment.Stretch
+            };
+            // Avalonia supplies the effective title bar inset, including fullscreen
+            // and scaling changes. Keep client content below the decorations overlay.
+            _contentHost.Bind(MarginProperty, this.GetObservable(WindowDecorationMarginProperty));
+        }
+        else
+        {
+            WindowDecorations = WindowDecorations.None;
+            _chrome = new LootWindowChrome();
+            _chrome.CustomTitleBarButtonsHost.Content = CustomTitleBarButtons;
+            _contentHost = _chrome;
+        }
+        Content = _contentHost;
     }
 
     /// <summary>Gets or sets controls displayed before the standard window buttons.</summary>
@@ -74,7 +85,7 @@ public abstract class LootWindow : Avalonia.Controls.Window
 
         WindowDecorations = WindowDecorations.Full;
         ExtendClientAreaToDecorationsHint = true;
-        _chrome.StandardWindowButtons.IsVisible = false;
+        _chrome!.StandardWindowButtons.IsVisible = false;
         _chrome.TitleText.Margin = new Thickness(72, 0, 12, 0);
     }
 
@@ -95,7 +106,7 @@ public abstract class LootWindow : Avalonia.Controls.Window
 
     internal void CloseFromTitleBar() => OnCloseWindow(this, new RoutedEventArgs());
 
-    private void UpdateMaximizeIcon() => _chrome.UpdateMaximizeIcon(WindowState);
+    private void UpdateMaximizeIcon() => _chrome?.UpdateMaximizeIcon(WindowState);
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
@@ -103,16 +114,20 @@ public abstract class LootWindow : Avalonia.Controls.Window
 
         if (change.Property == CustomTitleBarButtonsProperty)
         {
-            _chrome.CustomTitleBarButtonsHost.Content = CustomTitleBarButtons;
+            if (_chrome is not null)
+                _chrome.CustomTitleBarButtonsHost.Content = CustomTitleBarButtons;
         }
-        else if (change.Property == ContentProperty && !_routingContent && !ReferenceEquals(Content, _chrome))
+        else if (change.Property == ContentProperty && _contentHost is not null && !_routingContent && !ReferenceEquals(Content, _contentHost))
         {
             var childContent = Content;
             _routingContent = true;
             try
             {
-                Content = _chrome;
-                _chrome.WindowContentPresenter.Content = childContent;
+                Content = _contentHost;
+                if (_chrome is not null)
+                    _chrome.WindowContentPresenter.Content = childContent;
+                else
+                    _contentHost.Content = childContent;
             }
             finally { _routingContent = false; }
         }
@@ -158,107 +173,7 @@ public abstract class LootWindow : Avalonia.Controls.Window
         base.OnOpened(e);
         ConfigurePlatformTitleBar();
         UpdateMaximizeIcon();
-        try { EnableNativeWindowChrome(); }
-        catch (Exception exception)
-        {
-            ExceptionLogger.Log(exception, nameof(LootWindow), "Could not configure native window chrome", LogLevel.Warning);
-        }
     }
-
-    private void EnableNativeWindowChrome()
-    {
-        if (!OperatingSystem.IsWindows() || TryGetPlatformHandle() is not { Handle: var handle })
-        {
-            return;
-        }
-
-        EnableWindowsStateAnimations(handle);
-
-        // Keep the client-drawn title bar while asking DWM to render the outer
-        // frame. DWM then owns the shadow, DPI scaling and Windows 11 corners.
-        var margins = new Margins(1, 1, 1, 1);
-        _ = DwmExtendFrameIntoClientArea(handle, in margins);
-
-        var cornerPreference = DwmWindowCornerPreferenceRound;
-        _ = DwmSetWindowAttribute(
-            handle,
-            DwmWindowCornerPreferenceAttribute,
-            in cornerPreference,
-            sizeof(int));
-    }
-
-    private static void EnableWindowsStateAnimations(nint handle)
-    {
-        // Avalonia's WindowDecorations=None removes these non-client style bits.
-        // The client still owns the title bar and buttons, but Windows needs the
-        // bits present to associate the window with the normal DWM state
-        // transitions (minimize, maximize, restore and close).
-        var style = GetWindowLongPtr(handle, WindowStyleIndex).ToInt64();
-        if (style == 0)
-        {
-            return;
-        }
-
-        var animatedStyle = style
-            | WindowStyleCaption
-            | WindowStyleSystemMenu
-            | WindowStyleMinimizeBox
-            | WindowStyleMaximizeBox;
-
-        if (style == animatedStyle)
-        {
-            return;
-        }
-
-        if (SetWindowLongPtr(handle, WindowStyleIndex, new nint(animatedStyle)) == nint.Zero
-            && Marshal.GetLastWin32Error() != 0)
-        {
-            return;
-        }
-
-        _ = SetWindowPos(
-            handle,
-            nint.Zero,
-            0,
-            0,
-            0,
-            0,
-            SetWindowPosFrameChanged
-                | SetWindowPosNoActivate
-                | SetWindowPosNoMove
-                | SetWindowPosNoSize
-                | SetWindowPosNoZOrder);
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    private readonly record struct Margins(int Left, int Right, int Top, int Bottom);
-
-    [DllImport("dwmapi.dll")]
-    private static extern int DwmExtendFrameIntoClientArea(nint windowHandle, in Margins margins);
-
-    [DllImport("dwmapi.dll")]
-    private static extern int DwmSetWindowAttribute(
-        nint windowHandle,
-        int attribute,
-        in int attributeValue,
-        int attributeSize);
-
-    [DllImport("user32.dll", EntryPoint = "GetWindowLongPtrW", SetLastError = true)]
-    private static extern nint GetWindowLongPtr(nint windowHandle, int index);
-
-    [DllImport("user32.dll", EntryPoint = "SetWindowLongPtrW", SetLastError = true)]
-    private static extern nint SetWindowLongPtr(nint windowHandle, int index, nint value);
-
-    [DllImport("user32.dll", SetLastError = true)]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool SetWindowPos(
-        nint windowHandle,
-        nint insertAfter,
-        int x,
-        int y,
-        int width,
-        int height,
-        uint flags);
 }
 
 internal partial class LootWindowChrome : UserControl

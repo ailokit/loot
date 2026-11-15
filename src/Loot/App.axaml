@@ -282,11 +282,13 @@
             <Setter Property="Background" Value="{DynamicResource DefaultButtonDisabledBackgroundBrush}" />
             <Setter Property="Foreground" Value="{DynamicResource DefaultButtonDisabledForegroundBrush}" />
             <Setter Property="BorderBrush" Value="{DynamicResource DefaultButtonDisabledBorderBrush}" />
+            <Setter Property="BorderThickness" Value="0" />
         </Style>
         <Style Selector="Button:disabled /template/ ContentPresenter#PART_ContentPresenter">
             <Setter Property="Background" Value="{DynamicResource DefaultButtonDisabledBackgroundBrush}" />
             <Setter Property="Foreground" Value="{DynamicResource DefaultButtonDisabledForegroundBrush}" />
             <Setter Property="BorderBrush" Value="{DynamicResource DefaultButtonDisabledBorderBrush}" />
+            <Setter Property="BorderThickness" Value="0" />
         </Style>
         <Style Selector="Button:disabled TextBlock">
             <Setter Property="Foreground" Value="{DynamicResource DefaultButtonDisabledForegroundBrush}" />
@@ -726,13 +728,13 @@
                     <SolidColorBrush x:Key="DefaultButtonDisabledBackgroundBrush" Color="#E3E6ED" />
                     <SolidColorBrush x:Key="DefaultButtonDisabledForegroundBrush" Color="#62697A" />
                     <SolidColorBrush x:Key="DefaultButtonDisabledBorderBrush" Color="#C4CAD4" />
-                    <SolidColorBrush x:Key="PrimaryButtonDisabledBackgroundBrush" Color="#BCC8F3" />
+                    <SolidColorBrush x:Key="PrimaryButtonDisabledBackgroundBrush" Color="#E3E6ED" />
                     <SolidColorBrush x:Key="PrimaryButtonDisabledForegroundBrush" Color="#25345D" />
                     <SolidColorBrush x:Key="PrimaryButtonDisabledBorderBrush" Color="#8998D0" />
-                    <SolidColorBrush x:Key="WarningButtonDisabledBackgroundBrush" Color="#F0D8AA" />
+                    <SolidColorBrush x:Key="WarningButtonDisabledBackgroundBrush" Color="#E3E6ED" />
                     <SolidColorBrush x:Key="WarningButtonDisabledForegroundBrush" Color="#624516" />
                     <SolidColorBrush x:Key="WarningButtonDisabledBorderBrush" Color="#D6B66F" />
-                    <SolidColorBrush x:Key="DangerButtonDisabledBackgroundBrush" Color="#F0C4C8" />
+                    <SolidColorBrush x:Key="DangerButtonDisabledBackgroundBrush" Color="#E3E6ED" />
                     <SolidColorBrush x:Key="DangerButtonDisabledForegroundBrush" Color="#7B2F38" />
                     <SolidColorBrush x:Key="DangerButtonDisabledBorderBrush" Color="#D8959C" />
                     <SolidColorBrush x:Key="DefaultButtonBackgroundBrush" Color="#F0F2F7" />
@@ -796,13 +798,13 @@
                     <SolidColorBrush x:Key="DefaultButtonDisabledBackgroundBrush" Color="#343741" />
                     <SolidColorBrush x:Key="DefaultButtonDisabledForegroundBrush" Color="#D0D4DC" />
                     <SolidColorBrush x:Key="DefaultButtonDisabledBorderBrush" Color="#585C67" />
-                    <SolidColorBrush x:Key="PrimaryButtonDisabledBackgroundBrush" Color="#39466F" />
+                    <SolidColorBrush x:Key="PrimaryButtonDisabledBackgroundBrush" Color="#343741" />
                     <SolidColorBrush x:Key="PrimaryButtonDisabledForegroundBrush" Color="#E0E5FF" />
                     <SolidColorBrush x:Key="PrimaryButtonDisabledBorderBrush" Color="#536497" />
-                    <SolidColorBrush x:Key="WarningButtonDisabledBackgroundBrush" Color="#554326" />
+                    <SolidColorBrush x:Key="WarningButtonDisabledBackgroundBrush" Color="#343741" />
                     <SolidColorBrush x:Key="WarningButtonDisabledForegroundBrush" Color="#F8E7C5" />
                     <SolidColorBrush x:Key="WarningButtonDisabledBorderBrush" Color="#806633" />
-                    <SolidColorBrush x:Key="DangerButtonDisabledBackgroundBrush" Color="#563039" />
+                    <SolidColorBrush x:Key="DangerButtonDisabledBackgroundBrush" Color="#343741" />
                     <SolidColorBrush x:Key="DangerButtonDisabledForegroundBrush" Color="#FFE2E5" />
                     <SolidColorBrush x:Key="DangerButtonDisabledBorderBrush" Color="#824651" />
                     <SolidColorBrush x:Key="DefaultButtonBackgroundBrush" Color="#1A1B22" />

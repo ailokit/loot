@@ -1,0 +1,62 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="using:Loot.Views"
+                    xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                    x:Class="Loot.Views.WindowsWindowDecorations"
+                    x:ClassModifier="internal">
+    <ControlTheme x:Key="LootWindowsWindowDecorations" TargetType="WindowDrawnDecorations">
+        <Setter Property="DefaultTitleBarHeight" Value="28" />
+        <Setter Property="Template">
+            <WindowDrawnDecorationsTemplate>
+                <WindowDrawnDecorationsContent>
+                    <WindowDrawnDecorationsContent.Overlay>
+                        <Grid x:Name="PART_TitleBar"
+                              x:DataType="local:WindowsWindowDecorationsContext"
+                              ColumnDefinitions="*,Auto"
+                              VerticalAlignment="Top"
+                              Height="{TemplateBinding TitleBarHeight}"
+                              IsVisible="{TemplateBinding HasTitleBar}"
+                              Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
+                              WindowDecorationProperties.ElementRole="TitleBar">
+                            <TextBlock Text="{TemplateBinding Title}"
+                                       FontSize="14" FontWeight="SemiBold"
+                                       VerticalAlignment="Center" Margin="12,0"
+                                       TextTrimming="CharacterEllipsis" />
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <!-- Preserve the window ViewModel as the custom controls' context. -->
+                                <ContentControl
+                                    Content="{Binding #PART_TitleBar.((local:WindowsWindowDecorationsContext)DataContext).Window.CustomTitleBarButtons}"
+                                    DataContext="{Binding #PART_TitleBar.((local:WindowsWindowDecorationsContext)DataContext).Window.DataContext}"
+                                    WindowDecorationProperties.ElementRole="User" />
+                                <!-- Standard PART names let Avalonia own click handling, allowed
+                                     actions and state. Roles map to native non-client hit tests. -->
+                                <Button x:Name="PART_MinimizeButton"
+                                        Classes="window-action-button"
+                                        IsVisible="{Binding Window.CanMinimize}"
+                                        WindowDecorationProperties.ElementRole="MinimizeButton"
+                                        ToolTip.Tip="Minimize">
+                                    <materialIcons:MaterialIcon Kind="WindowMinimize" Width="16" Height="16" />
+                                </Button>
+                                <Button x:Name="PART_MaximizeButton"
+                                        Classes="window-action-button"
+                                        IsVisible="{Binding Window.CanMaximize}"
+                                        WindowDecorationProperties.ElementRole="MaximizeButton">
+                                    <materialIcons:MaterialIcon x:Name="MaximizeIcon" Kind="WindowMaximize" Width="16" Height="16" />
+                                </Button>
+                                <Button x:Name="PART_CloseButton"
+                                        Classes="window-action-button close-button"
+                                        WindowDecorationProperties.ElementRole="CloseButton"
+                                        ToolTip.Tip="Close">
+                                    <materialIcons:MaterialIcon Kind="WindowClose" Width="16" Height="16" />
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </WindowDrawnDecorationsContent.Overlay>
+                </WindowDrawnDecorationsContent>
+            </WindowDrawnDecorationsTemplate>
+        </Setter>
+        <Style Selector="^:maximized /template/ materialIcons|MaterialIcon#MaximizeIcon">
+            <Setter Property="Kind" Value="WindowRestore" />
+        </Style>
+    </ControlTheme>
+</ResourceDictionary>
